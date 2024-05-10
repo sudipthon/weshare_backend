@@ -1,0 +1,38 @@
+#Purpose/Goal
+    Platform where exchange of goods without money is made as smooth as with money.
+
+#Something unique or haard thing that other won't be able to copy easily
+
+
+
+#Outcome
+    A platform where people can exchange goods without money.
+    Reduce and Reuse of goods.
+    Reduce the amount of waste.
+    Reduce the spending of individuals and later of whole nation
+
+#Features/Functionalities/Funtional requirement
+    User can post the goods they want to give away.
+             post the goods they want to take.
+             search for goods they want to take.
+             search for goods they want to give away.
+             contact the person who posted the goods.
+             rate the person who posted the goods.
+             see the rating of the person who posted the goods.
+             see the goods posted by the person who posted the goods.
+             see the goods taken by the person who posted the goods.
+
+
+    
+authentication/accout app
+
+his is a good start for user authentication in a Django Rest Framework application. However, depending on the
+ requirements of your application, you might need to add more functionality. For example, you might want to add 
+ methods for updating a user's information, changing a user's password, or resetting a forgotten password.
+  You might also want to add more security features, such as throttling to prevent brute force attacks, or 
+  email verification to confirm that a user owns the email address they registered with.
+
+
+  actions
+    set cookies from API
+    check how to get the user id for changing password
