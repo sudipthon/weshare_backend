@@ -40,11 +40,21 @@ class UserViewSet(viewsets.ModelViewSet):
         email = request.data.get("email")
         password = request.data.get("password")
         user = authenticate(email=email, password=password)
+        # if user is not None:
+        #     token, _ = Token.objects.get_or_create(user=user)
+        #     # return Response({"token": token.key})
+        #     return Response({"token": token.key, "id": user.id})
+
+        # else:
+        #     return Response(
+        #         {"error": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST
+        #     )
         if user is not None:
             token, _ = Token.objects.get_or_create(user=user)
-            # return Response({"token": token.key})
-            return Response({"token": token.key, "id": user.id})
-
+            response = Response({"token": token.key, "user_id": user.id})
+            response.set_cookie('token', token.key, httponly=True)
+            response.set_cookie('user_id', user.id, httponly=True)
+            return response
         else:
             return Response(
                 {"error": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST

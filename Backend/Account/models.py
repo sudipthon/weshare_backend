@@ -28,7 +28,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     username=models.CharField(max_length=100)
     email = models.EmailField(max_length=100, unique=True)
     is_verified = models.BooleanField(default=False)
-    pic = models.ImageField(upload_to='images/profile_pics', default='default.jpg')
+    pic = models.ImageField(upload_to='images/profile_pics')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     groups = models.ManyToManyField(Group, related_name='custom_user_groups')

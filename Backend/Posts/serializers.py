@@ -4,6 +4,7 @@ from Account.models import User
 from django.utils.timesince import timesince
 from django.utils import timezone
 from datetime import datetime, timedelta
+from django.utils.datastructures import MultiValueDict
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,7 +17,23 @@ class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
         fields = ["image"]
+        
+    def to_internal_value(self, data):
+        if isinstance(data, MultiValueDict):
+            # Handle MultiValueDict
+            print(data)
+            images = data.getlist('[image]')
+            if images:
+                image = images[0]
+            else:
+                raise serializers.ValidationError("The image field is required.")
+        else:
+            # Handle regular dict
+            image = data.get('image')
+            if not image:
+                raise serializers.ValidationError("The image field is required.")
 
+        return image
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,12 +47,21 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ["name"]
 
     def to_internal_value(self, data):
-        # Overriding the default implementation
-        # to check if a tag with the given name already exists.
-        name = data.get("name")
+        if isinstance(data, MultiValueDict):
+            # Handle MultiValueDict
+            names = data.getlist('[name]')
+            if names:
+                name = names[0]
+            else:
+                raise serializers.ValidationError("The name field is required.")
+        else:
+            # Handle regular dict
+            name = data.get('name')
+            if not name:
+                raise serializers.ValidationError("The name field is required.")
+
         tag, created = Tag.objects.get_or_create(name=name)
         return tag
-
 
 class PostSerializer(serializers.ModelSerializer):
     images = ImageSerializer(many=True)
@@ -69,20 +95,21 @@ class PostSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         images_data = validated_data.pop("images", [])
+        # print(validated_data)
         tags_data = validated_data.pop("tags", [])
         post = Post.objects.create(**validated_data)
+        # for image_data in images_data:
+        #     Image.objects.create(post=post, **image_data)
         for image_data in images_data:
-            Image.objects.create(post=post, **image_data)
+            image_serializer = ImageSerializer(data={'image': image_data})
+            if image_serializer.is_valid():
+                Image.objects.create(post=post, **image_serializer.validated_data)
+    
         for tag_data in tags_data:
-            tag, created = Tag.objects.get_or_create(name=tag_data["name"])
             post.tags.add(tag_data)
+            
         return post
-        # for tag_data in tags_data:
-        #     tag_serializer = TagSerializer(data=tag_data)
-        #     if tag_serializer.is_valid():
-        #         tag = tag_serializer.save()
-        #         post.tags.add(tag)
-        # return post
+     
 
     def update(self, instance, validated_data):
         images_data = validated_data.pop("images", [])
