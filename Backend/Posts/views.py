@@ -5,7 +5,13 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 from django.shortcuts import get_list_or_404
 from .models import *
 from .serializers import *
+from rest_framework.pagination import PageNumberPagination
+from django.db.models import Q
 
+
+
+# class CustomPageNumberPagination(PageNumberPagination):
+#     page_size = 5  # specify the number of items per page
 
 class IsOwner(BasePermission):
     """Permission class to check if request user is the owner of the post."""
@@ -37,14 +43,41 @@ class PostViewSet(viewsets.ModelViewSet):
     @action(detail=False, url_path="giveaway")
     def list_giveaways(self, request, *args, **kwargs):
         """Return a list of giveaway posts."""
-        giveaways = get_list_or_404(Post, post_type="Giveaway")
-        serializer = self.get_serializer(giveaways, many=True)
+        # self.pagination_class = CustomPageNumberPagination  # set the custom pagination class
+
+
+        giveaway = Post.objects.filter(post_type="Giveaway")
+        page = self.paginate_queryset(giveaway)
+        if not giveaway:
+            return Response(
+                {"message": "There is no post of this type."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(giveaway, many=True)
         return Response(serializer.data)
 
     @action(detail=False, url_path="exchange")
     def list_exchanges(self, request, *args, **kwargs):
         """Return a list of exchange posts."""
-        exchanges = get_list_or_404(Post, post_type="Exchange")
+        
+        # self.pagination_class = CustomPageNumberPagination  # set the custom pagination class
+
+        
+        exchanges = Post.objects.filter(post_type="Exchange")
+        page = self.paginate_queryset(exchanges)
+        if not exchanges:
+            return Response(
+                {"message": "There is no post of this type."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
         serializer = self.get_serializer(exchanges, many=True)
         return Response(serializer.data)
 
@@ -52,11 +85,59 @@ class PostViewSet(viewsets.ModelViewSet):
     def my_posts(self, request):
         """Return a list of posts created by the current user."""
         my_posts = Post.objects.filter(author=request.user)
+        page = self.paginate_queryset(my_posts)
         if not my_posts:
             return Response(
                 {"message": "No posts by this user."}, status=status.HTTP_404_NOT_FOUND
             )
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(my_posts, many=True)
+        return Response(serializer.data)
+
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="user/<int:user_id>/posts",
+    )
+    def user_posts(self, request, user_id=None):
+        """Return a list of posts created by the user with the given ID."""
+        user_posts = Post.objects.filter(author_id=user_id)
+        page = self.paginate_queryset(user_posts)
+        if not user_posts:
+            return Response(
+                {"message": "No posts by this user."}, status=status.HTTP_404_NOT_FOUND
+            )
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(user_posts, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=["get"])
+    def search(self, request):
+        """Return a list of posts that match the search query."""
+        query = request.query_params.get("query", "")
+        post_type = request.query_params.get("post_type", "")
+
+        posts = Post.objects.filter(
+            Q(author__username__icontains=query)
+            | Q(content__icontains=query)
+            | Q(tags__name__icontains=query),
+            post_type=post_type,
+        )
+
+        page = self.paginate_queryset(posts)
+        if not posts:
+            return Response(
+                {"message": "No posts match this search."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(posts, many=True)
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
@@ -75,6 +156,18 @@ class PostViewSet(viewsets.ModelViewSet):
             )
         return super().update(request, *args, **kwargs)
 
+    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
+    def upvote(self, request, pk=None):
+        post = self.get_object()
+        post.upvotes.add(request.user)
+        return Response({"status": "post upvoted"}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
+    def undo_upvote(self, request, pk=None):
+        post = self.get_object()
+        post.upvotes.remove(request.user)
+        return Response({"status": "upvote removed"}, status=status.HTTP_200_OK)
+
     def destroy(self, request, *args, **kwargs):
         post = self.get_object()
         if post.author != request.user:
@@ -82,14 +175,24 @@ class PostViewSet(viewsets.ModelViewSet):
                 {"error": "You are not the author of this post."},
                 status=status.HTTP_403_FORBIDDEN,
             )
+        post.comments.all().delete()
         return super().destroy(request, *args, **kwargs)
 
     def get_permissions(self):
         """Instantiates and returns the list of permissions."""
-        if self.action in ["create", "update", "partial_update", "destroy", "my_posts"]:
-            self.permission_classes = [IsAuthenticated, IsOwner, IsCommentOwner]
-        elif self.action in ["list_giveaways", "list_exchanges"]:
+
+        if self.action in ["create", "update", "partial_update", "my_posts"]:
+            self.permission_classes = [IsAuthenticated, IsOwner]
+        elif self.action == "destroy":
+            self.permission_classes = [IsAuthenticated, IsOwner]
+        elif self.action in [
+            "list_giveaways",
+            "list_exchanges",
+            "search",
+            "user_posts",
+        ]:
             self.permission_classes = []
+
         return super().get_permissions()
 
 

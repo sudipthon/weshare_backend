@@ -10,30 +10,31 @@ from django.utils.datastructures import MultiValueDict
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["username", "pic"]
+        fields = ["username", "pic", "id"]
 
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Image
         fields = ["image"]
-        
+
     def to_internal_value(self, data):
         if isinstance(data, MultiValueDict):
             # Handle MultiValueDict
             print(data)
-            images = data.getlist('[image]')
+            images = data.getlist("[image]")
             if images:
                 image = images[0]
             else:
                 raise serializers.ValidationError("The image field is required.")
         else:
             # Handle regular dict
-            image = data.get('image')
+            image = data.get("image")
             if not image:
                 raise serializers.ValidationError("The image field is required.")
 
         return image
+
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -49,29 +50,45 @@ class TagSerializer(serializers.ModelSerializer):
     def to_internal_value(self, data):
         if isinstance(data, MultiValueDict):
             # Handle MultiValueDict
-            names = data.getlist('[name]')
+            names = data.getlist("[name]")
             if names:
                 name = names[0]
             else:
                 raise serializers.ValidationError("The name field is required.")
         else:
             # Handle regular dict
-            name = data.get('name')
+            name = data.get("name")
             if not name:
                 raise serializers.ValidationError("The name field is required.")
 
         tag, created = Tag.objects.get_or_create(name=name)
         return tag
 
+
 class PostSerializer(serializers.ModelSerializer):
     images = ImageSerializer(many=True)
     tags = TagSerializer(many=True)
     author = UserSerializer(read_only=True)
     ago = serializers.SerializerMethodField()
+    vote_count=serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = "__all__"  # field for deserialization meaning field that will be used for create and update
+        fields = [
+            'id',
+            'content',
+            'time_stamp',
+            'author',
+            'images',
+            'tags',
+            'post_type',
+            'share_count',
+            'vote_count',
+            'ago',
+            'comments',
+            
+        
+            ]  # field for deserialization meaning field that will be used for create and update
         read_only_fields = [
             "author",
             "share_count",
@@ -92,24 +109,23 @@ class PostSerializer(serializers.ModelSerializer):
             return f"{diff.days} days ago"
         else:
             return f"{diff.days // 7} weeks ago"
+        
+    def get_vote_count(self, instance):
+        return instance.upvotes.count()
 
     def create(self, validated_data):
         images_data = validated_data.pop("images", [])
-        # print(validated_data)
         tags_data = validated_data.pop("tags", [])
         post = Post.objects.create(**validated_data)
-        # for image_data in images_data:
-        #     Image.objects.create(post=post, **image_data)
         for image_data in images_data:
-            image_serializer = ImageSerializer(data={'image': image_data})
+            image_serializer = ImageSerializer(data={"image": image_data})
             if image_serializer.is_valid():
-                Image.objects.create(post=post, **image_serializer.validated_data)
-    
+                Image.objects.create(post=post, image=image_serializer.validated_data)
+
         for tag_data in tags_data:
             post.tags.add(tag_data)
-            
+
         return post
-     
 
     def update(self, instance, validated_data):
         images_data = validated_data.pop("images", [])
