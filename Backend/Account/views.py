@@ -85,38 +85,39 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
-    def change_password(self, request, pk=None):
-        try:
-            user = self.get_object()
-        except Http404:
-            return Response(
-                {"detail": "User not found."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        if request.user != user:
-            return Response(
-                {
-                    "detail": "You do not have permission to change this user's password."
-                },
-                status=status.HTTP_403_FORBIDDEN,
-            )
-        old_password = request.data.get("old_password")
-        new_password = request.data.get("new_password")
-        if not user.check_password(old_password):
-            return Response(
-                {"old_password": "Wrong password."}, status=status.HTTP_400_BAD_REQUEST
-            )
-        if user.check_password(new_password):
-            return Response(
-                {"new_password": "New password cannot be the same as old password."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        user.set_password(new_password)
-        user.save()
-        return Response(
-            {"detail": "Password updated successfully."}, status=status.HTTP_200_OK
-        )
+
+    # @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
+    # def change_password(self, request, pk=None):
+    #     try:
+    #         user = self.get_object()
+    #     except Http404:
+    #         return Response(
+    #             {"detail": "User not found."},
+    #             status=status.HTTP_404_NOT_FOUND,
+    #         )
+    #     if request.user != user:
+    #         return Response(
+    #             {
+    #                 "detail": "You do not have permission to change this user's password."
+    #             },
+    #             status=status.HTTP_403_FORBIDDEN,
+    #         )
+    #     old_password = request.data.get("old_password")
+    #     new_password = request.data.get("new_password")
+    #     if not user.check_password(old_password):
+    #         return Response(
+    #             {"old_password": "Wrong password."}, status=status.HTTP_400_BAD_REQUEST
+    #         )
+    #     if user.check_password(new_password):
+    #         return Response(
+    #             {"new_password": "New password cannot be the same as old password."},
+    #             status=status.HTTP_400_BAD_REQUEST,
+    #         )
+    #     user.set_password(new_password)
+    #     user.save()
+    #     return Response(
+    #         {"detail": "Password updated successfully."}, status=status.HTTP_200_OK
+    #     )
 
     # @action(detail=False, methods=["post"], permission_classes=[AllowAny])
     # def reset_password(self, request):

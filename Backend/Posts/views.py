@@ -101,19 +101,19 @@ class PostViewSet(viewsets.ModelViewSet):
         methods=["get"],
         url_path="user/<int:user_id>/posts",
     )
-    def user_posts(self, request, user_id=None):
-        """Return a list of posts created by the user with the given ID."""
-        user_posts = Post.objects.filter(author_id=user_id)
-        page = self.paginate_queryset(user_posts)
-        if not user_posts:
-            return Response(
-                {"message": "No posts by this user."}, status=status.HTTP_404_NOT_FOUND
-            )
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(user_posts, many=True)
-        return Response(serializer.data)
+    # def user_posts(self, request, user_id=None):
+    #     """Return a list of posts created by the user with the given ID."""
+    #     user_posts = Post.objects.filter(author_id=user_id)
+    #     page = self.paginate_queryset(user_posts)
+    #     if not user_posts:
+    #         return Response(
+    #             {"message": "No posts by this user."}, status=status.HTTP_404_NOT_FOUND
+    #         )
+    #     if page is not None:
+    #         serializer = self.get_serializer(page, many=True)
+    #         return self.get_paginated_response(serializer.data)
+    #     serializer = self.get_serializer(user_posts, many=True)
+    #     return Response(serializer.data)
 
     @action(detail=False, methods=["get"])
     def search(self, request):

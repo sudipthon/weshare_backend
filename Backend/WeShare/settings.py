@@ -154,3 +154,23 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 3,
 }
+
+
+
+
+
+
+
+
+
+
+
+
+# STATIC_URL = "/home/myusername/myproject/static/"
+# # STATICFILES_DIRS = [
+# #     BASE_DIR / "statics",
+# # ]
+# STATIC_ROOT="/home/myusername/myproject/static/"
+# MEDIA_URL = "/media/"
+# # Default primary key field type
+# # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

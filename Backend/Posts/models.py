@@ -28,7 +28,7 @@ class Post(models.Model):
     # image = models.ImageField(upload_to="images/posts", default="default.jpg")
     share_count = models.PositiveIntegerField(default=0, blank=True)
     upvotes = models.ManyToManyField(User, related_name="votes", blank=True)
-    tags = models.ManyToManyField(Tag, related_name="tag_posts",null=True, blank=True)
+    tags = models.ManyToManyField(Tag, related_name="tag_posts", blank=True)
     flag = models.CharField(max_length=30, choices=OPTIONS, blank=True, null=True)
     post_type = models.CharField(max_length=30, choices=post_type)
     

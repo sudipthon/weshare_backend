@@ -2,21 +2,26 @@ from rest_framework import serializers, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import User
-
+from Posts.models import Post
 
 class UserSerializer(serializers.ModelSerializer):
     # change_password = serializers.SerializerMethodField()
+    num_posts = serializers.SerializerMethodField()
+
 
     class Meta:
         model = User
         fields = [
             "username",
-            "email",
-            "password",
-            "is_active",
+            "pic",
+            "num_posts"
             #   "change_password"
         ]
+        read_only_fields = ["num_posts"]
         extra_kwargs = {"password": {"write_only": True}}
+    
+    def get_num_posts(self, obj):
+        return Post.objects.filter(author=obj).count()
 
     def create(self, validated_data):
         password = validated_data.pop("password", None)
