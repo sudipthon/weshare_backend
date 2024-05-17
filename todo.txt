@@ -1,7 +1,4 @@
 add option for delete and update of the post
 upvote and unupvote posts
 search feature
-users being able to update the post
 make each image of the post clickable
-search for tailwind componenets for the project
-make tag field> blank or nullable and also turn the space into underscore use slugify

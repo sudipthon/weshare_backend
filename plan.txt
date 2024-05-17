@@ -1,5 +1,4 @@
 magic9864hey-python anywhere pass
-ssh user: id_rsa
 
 #Purpose/Goal
     Platform where exchange of goods without money is made as smooth as with money.

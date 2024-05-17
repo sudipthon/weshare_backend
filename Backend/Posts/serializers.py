@@ -115,6 +115,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         images_data = validated_data.pop("images", [])
+
         tags_data = validated_data.pop("tags", [])
         post = Post.objects.create(**validated_data)
         for image_data in images_data:

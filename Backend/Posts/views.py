@@ -9,9 +9,8 @@ from rest_framework.pagination import PageNumberPagination
 from django.db.models import Q
 
 
-
-# class CustomPageNumberPagination(PageNumberPagination):
-#     page_size = 5  # specify the number of items per page
+class IsAuthenticatedCustom(IsAuthenticated):
+    message = 'You need to login for this action.'
 
 class IsOwner(BasePermission):
     """Permission class to check if request user is the owner of the post."""
@@ -154,13 +153,15 @@ class PostViewSet(viewsets.ModelViewSet):
                 {"error": "You are not the author of this post."},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        return super().update(request, *args, **kwargs)
+        super().update(request, *args, **kwargs)
+        return Response({"message": "Post Updated"}, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
+
+    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticatedCustom])
     def upvote(self, request, pk=None):
         post = self.get_object()
         post.upvotes.add(request.user)
-        return Response({"status": "post upvoted"}, status=status.HTTP_200_OK)
+        return Response({"status": "Post upvoted"}, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
     def undo_upvote(self, request, pk=None):
@@ -176,13 +177,14 @@ class PostViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_403_FORBIDDEN,
             )
         post.comments.all().delete()
-        return super().destroy(request, *args, **kwargs)
+        super().destroy(request, *args, **kwargs)
+        return Response({"message": "Post deleted"}, status=status.HTTP_200_OK)
 
     def get_permissions(self):
         """Instantiates and returns the list of permissions."""
 
         if self.action in ["create", "update", "partial_update", "my_posts"]:
-            self.permission_classes = [IsAuthenticated, IsOwner]
+            self.permission_classes = [IsAuthenticatedCustom, IsOwner]
         elif self.action == "destroy":
             self.permission_classes = [IsAuthenticated, IsOwner]
         elif self.action in [
