@@ -210,7 +210,15 @@ class CommentViewSet(viewsets.ModelViewSet):
             return Response(
                 {"error": "Text field is required"}, status=status.HTTP_400_BAD_REQUEST
             )
-
-        comment = Comment.objects.create(author=request.user, post=post, text=text)
+        parent_id = request.data.get("parent")
+        parent = None
+        if parent_id is not None:
+            try:
+                parent = Comment.objects.get(id=parent_id)
+            except Comment.DoesNotExist:
+                return Response(
+                    {"error": "Parent comment does not exist"}, status=status.HTTP_400_BAD_REQUEST
+                )
+        comment = Comment.objects.create(author=request.user, post=post, text=text, parent=parent)
         serializer = self.get_serializer(comment)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

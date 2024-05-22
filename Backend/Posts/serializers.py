@@ -37,9 +37,19 @@ class ImageSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    parent = serializers.PrimaryKeyRelatedField(queryset=Comment.objects.all(), required=False)
+
     class Meta:
         model = Comment
-        fields = ["id", "time_stamp", "author", "text", "post"]
+        fields = ["id", "time_stamp", "author", "text", "post", "parent"]
+    
+    def create(self, validated_data):
+        parent = validated_data.pop('parent', None)
+        comment = Comment.objects.create(**validated_data)
+        if parent is not None:
+            comment.parent = parent
+            comment.save()
+        return comment
 
 
 class TagSerializer(serializers.ModelSerializer):

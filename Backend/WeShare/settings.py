@@ -168,10 +168,10 @@ REST_FRAMEWORK = {
 
 
 # STATIC_URL = "/home/myusername/myproject/static/"
-# # STATICFILES_DIRS = [
-# #     BASE_DIR / "statics",
-# # ]
-# STATIC_ROOT="/home/myusername/myproject/static/"
+# STATICFILES_DIRS = [
+#     BASE_DIR / "statics",
+# ]
+STATIC_ROOT="/home/myusername/myproject/staticfiles/"
 # MEDIA_URL = "/media/"
 # # Default primary key field type
 # # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
