@@ -12,8 +12,6 @@ class ImageInline(admin.TabularInline):
 class PostAdmin(admin.ModelAdmin):
     inlines = [CommentInline,ImageInline]
     list_filter = ('post_type',)
-    
-    
     list_display = ('__str__', 'time_stamp', 'author','post_type')
     
 @admin.register(Comment)

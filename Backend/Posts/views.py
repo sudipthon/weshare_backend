@@ -10,7 +10,8 @@ from django.db.models import Q
 
 
 class IsAuthenticatedCustom(IsAuthenticated):
-    message = 'You need to login for this action.'
+    message = "You need to login for this action."
+
 
 class IsOwner(BasePermission):
     """Permission class to check if request user is the owner of the post."""
@@ -44,7 +45,6 @@ class PostViewSet(viewsets.ModelViewSet):
         """Return a list of giveaway posts."""
         # self.pagination_class = CustomPageNumberPagination  # set the custom pagination class
 
-
         giveaway = Post.objects.filter(post_type="Giveaway")
         page = self.paginate_queryset(giveaway)
         if not giveaway:
@@ -62,10 +62,9 @@ class PostViewSet(viewsets.ModelViewSet):
     @action(detail=False, url_path="exchange")
     def list_exchanges(self, request, *args, **kwargs):
         """Return a list of exchange posts."""
-        
+
         # self.pagination_class = CustomPageNumberPagination  # set the custom pagination class
 
-        
         exchanges = Post.objects.filter(post_type="Exchange")
         page = self.paginate_queryset(exchanges)
         if not exchanges:
@@ -156,7 +155,6 @@ class PostViewSet(viewsets.ModelViewSet):
         super().update(request, *args, **kwargs)
         return Response({"message": "Post Updated"}, status=status.HTTP_200_OK)
 
-
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticatedCustom])
     def upvote(self, request, pk=None):
         post = self.get_object()
@@ -187,12 +185,7 @@ class PostViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticatedCustom, IsOwner]
         elif self.action == "destroy":
             self.permission_classes = [IsAuthenticated, IsOwner]
-        elif self.action in [
-            "list_giveaways",
-            "list_exchanges",
-            "search",
-            "user_posts",
-        ]:
+        elif self.action in ["list_giveaways","list_exchanges","search","user_posts",]:
             self.permission_classes = []
 
         return super().get_permissions()

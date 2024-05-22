@@ -85,6 +85,12 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def get_permissions(self):
+        if self.action in ["login", "create", "register"]:
+            self.permission_classes = [AllowAny]
+        else:
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()
 
     # @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
     # def change_password(self, request, pk=None):
@@ -136,9 +142,3 @@ class UserViewSet(viewsets.ModelViewSet):
     #         send_mail(mail_subject, message, 'noreply@your-domain.com', [email])
     #     return Response({"detail": "Password reset email has been sent."}, status=status.HTTP_200_OK)
 
-    def get_permissions(self):
-        if self.action in ["login", "create", "register"]:
-            self.permission_classes = [AllowAny]
-        else:
-            self.permission_classes = [IsAuthenticated]
-        return super().get_permissions()

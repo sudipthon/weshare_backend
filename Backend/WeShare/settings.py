@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "Account.apps.AccountConfig",
+    #packages
+    'django_extensions',
     # rest related apps
     "corsheaders",
     "rest_framework",
@@ -51,7 +53,6 @@ INSTALLED_APPS = [
     # custom apps
     "Posts",
     "Message",
-    # 'django_extensions',
 ]
 
 MIDDLEWARE = [
