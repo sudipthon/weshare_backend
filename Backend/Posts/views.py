@@ -63,7 +63,7 @@ class PostViewSet(viewsets.ModelViewSet):
     def comments(self, request, pk=None):
         """Return a list of comments for a specific post."""
         post = self.get_object()
-        comments = Comment.objects.filter(post=post)
+        comments = Comment.objects.filter(post=post,reply=None)
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
 
@@ -201,9 +201,14 @@ class PostViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
+    # queryset = Comment.objects.filter(reply=None)
+
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
 
+    # def get_queryset(self):
+    #     return Comment.objects.filter(reply=None)
+    
     def create(self, request, *args, **kwargs):
         post_id = request.data.get("post_id")
         try:

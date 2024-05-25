@@ -37,12 +37,13 @@ class ImageSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    parent = serializers.PrimaryKeyRelatedField(queryset=Comment.objects.all(), required=False)
+    # parent = serializers.PrimaryKeyRelatedField(queryset=Comment.objects.all(), required=False)
     author = UserSerializer(read_only=True)
     time_stamp=serializers.SerializerMethodField()
+    replies=serializers.SerializerMethodField()
     class Meta:
         model = Comment
-        fields = ["id", "time_stamp", "author","time_stamp", "text", "parent"]
+        fields = ["id", "time_stamp", "author","time_stamp", "text", "replies"]
     
     def create(self, validated_data):
         parent = validated_data.pop('parent', None)
@@ -64,6 +65,14 @@ class CommentSerializer(serializers.ModelSerializer):
             return f"{diff.days} days ago"
         else:
             return f"{diff.days // 7} weeks ago"
+        
+    # def get_replies(self, obj):
+    #     if obj.reply is not None:
+    #         return CommentSerializer(obj.reply).data
+    #     return None
+    def get_replies(self, obj):
+        replies = Comment.objects.filter(reply=obj)
+        return CommentSerializer(replies, many=True).data
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -109,7 +118,7 @@ class PostSerializer(serializers.ModelSerializer):
             'share_count',
             'vote_count',
             'ago',
-            'comments',
+            # 'comments',
             
         
             ]  # field for deserialization meaning field that will be used for create and update
@@ -118,7 +127,7 @@ class PostSerializer(serializers.ModelSerializer):
             "share_count",
             "vote_count",
             "ago",
-            "comments",
+            # "comments",
         ]  #  field for serialization meaning field that will be retrieved
 
     def get_ago(self, obj):
