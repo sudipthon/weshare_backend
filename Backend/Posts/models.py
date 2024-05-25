@@ -53,8 +53,7 @@ class Comment(models.Model):
     )
 
     def __str__(self):
-        return self.author.email
-
+        return f"{self.text}>{self.author.email}"
 
 class Reports(models.Model):
     post = models.ForeignKey(

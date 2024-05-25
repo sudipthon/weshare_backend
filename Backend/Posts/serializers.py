@@ -38,10 +38,11 @@ class ImageSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     parent = serializers.PrimaryKeyRelatedField(queryset=Comment.objects.all(), required=False)
-
+    author = UserSerializer(read_only=True)
+    time_stamp=serializers.SerializerMethodField()
     class Meta:
         model = Comment
-        fields = ["id", "time_stamp", "author", "text", "post", "parent"]
+        fields = ["id", "time_stamp", "author","time_stamp", "text", "parent"]
     
     def create(self, validated_data):
         parent = validated_data.pop('parent', None)
@@ -50,12 +51,25 @@ class CommentSerializer(serializers.ModelSerializer):
             comment.parent = parent
             comment.save()
         return comment
+    
+    def get_time_stamp(self, obj):
+        now = timezone.now()
+        diff = now - obj.time_stamp
+
+        if diff <= timedelta(minutes=60):
+            return f"{diff.seconds // 60} minutes ago"
+        elif diff <= timedelta(hours=24):
+            return f"{diff.seconds // 3600} hours ago"
+        elif diff <= timedelta(days=7):
+            return f"{diff.days} days ago"
+        else:
+            return f"{diff.days // 7} weeks ago"
 
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ["name"]
+        fields = ["name",]
 
     def to_internal_value(self, data):
         if isinstance(data, MultiValueDict):

@@ -58,6 +58,14 @@ class PostViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(giveaway, many=True)
         return Response(serializer.data)
+    
+    @action(detail=True, methods=["get"])
+    def comments(self, request, pk=None):
+        """Return a list of comments for a specific post."""
+        post = self.get_object()
+        comments = Comment.objects.filter(post=post)
+        serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
 
     @action(detail=False, url_path="exchange")
     def list_exchanges(self, request, *args, **kwargs):
@@ -185,7 +193,7 @@ class PostViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticatedCustom, IsOwner]
         elif self.action == "destroy":
             self.permission_classes = [IsAuthenticated, IsOwner]
-        elif self.action in ["list_giveaways","list_exchanges","search","user_posts",]:
+        elif self.action in ["list_giveaways","list_exchanges","search","user_posts","comments"]:
             self.permission_classes = []
 
         return super().get_permissions()

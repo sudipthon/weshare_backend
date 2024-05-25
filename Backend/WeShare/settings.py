@@ -44,8 +44,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "Account.apps.AccountConfig",
-    #packages
-    'django_extensions',
+    # packages
+    "django_extensions",
     # rest related apps
     "corsheaders",
     "rest_framework",
@@ -57,8 +57,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
-      'whitenoise.middleware.WhiteNoiseMiddleware',
-
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -139,8 +138,8 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles/")
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media/"
@@ -160,16 +159,6 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 6,
 }
-
-
-
-
-
-
-
-
-
-
 
 
 # STATIC_URL = "/home/myusername/myproject/static/"
