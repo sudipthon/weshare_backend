@@ -223,15 +223,25 @@ class CommentViewSet(viewsets.ModelViewSet):
             return Response(
                 {"error": "Text field is required"}, status=status.HTTP_400_BAD_REQUEST
             )
-        parent_id = request.data.get("parent")
-        parent = None
+        parent_id = request.data.get("reply")
+        reply = None
         if parent_id is not None:
             try:
-                parent = Comment.objects.get(id=parent_id)
+                reply = Comment.objects.get(id=parent_id)
             except Comment.DoesNotExist:
                 return Response(
                     {"error": "Parent comment does not exist"}, status=status.HTTP_400_BAD_REQUEST
                 )
-        comment = Comment.objects.create(author=request.user, post=post, text=text, parent=parent)
+        comment = Comment.objects.create(author=request.user, post=post, text=text, reply=reply)
         serializer = self.get_serializer(comment)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    def destroy(self, request, *args, **kwargs):
+        comment = self.get_object()
+        if comment.author != request.user:
+            return Response(
+                {"error": "You are not the author of this comment."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        super().destroy(request, *args, **kwargs)
+        return Response({"message": "Comment deleted"}, status=status.HTTP_200_OK)

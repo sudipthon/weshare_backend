@@ -46,10 +46,10 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ["id", "time_stamp", "author","time_stamp", "text", "replies"]
     
     def create(self, validated_data):
-        parent = validated_data.pop('parent', None)
+        reply = validated_data.pop('reply', None)
         comment = Comment.objects.create(**validated_data)
-        if parent is not None:
-            comment.parent = parent
+        if reply is not None:
+            comment.reply = reply
             comment.save()
         return comment
     
