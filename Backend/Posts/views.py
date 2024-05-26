@@ -237,11 +237,12 @@ class CommentViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     def destroy(self, request, *args, **kwargs):
-        comment = self.get_object()
+        comment = Comment.objects.get(pk=kwargs["pk"])
         if comment.author != request.user:
             return Response(
                 {"error": "You are not the author of this comment."},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        super().destroy(request, *args, **kwargs)
+        # super().destroy(request, *args, **kwargs)
+        comment.delete
         return Response({"message": "Comment deleted"}, status=status.HTTP_200_OK)
