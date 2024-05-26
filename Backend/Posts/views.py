@@ -234,7 +234,8 @@ class CommentViewSet(viewsets.ModelViewSet):
                 )
         comment = Comment.objects.create(author=request.user, post=post, text=text, reply=reply)
         serializer = self.get_serializer(comment)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({"message": "Comment added"}, status=status.HTTP_201_CREATED)
     
     def destroy(self, request, *args, **kwargs):
         try:
