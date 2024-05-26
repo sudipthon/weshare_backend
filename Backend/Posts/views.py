@@ -58,7 +58,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(giveaway, many=True)
         return Response(serializer.data)
-    
+
     @action(detail=True, methods=["get"])
     def comments(self, request, pk=None):
         """Return a list of comments for a specific post."""
@@ -193,7 +193,13 @@ class PostViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticatedCustom, IsOwner]
         elif self.action == "destroy":
             self.permission_classes = [IsAuthenticated, IsOwner]
-        elif self.action in ["list_giveaways","list_exchanges","search","user_posts","comments"]:
+        elif self.action in [
+            "list_giveaways",
+            "list_exchanges",
+            "search",
+            "user_posts",
+            "comments",
+        ]:
             self.permission_classes = []
 
         return super().get_permissions()
@@ -225,8 +231,20 @@ class CommentViewSet(viewsets.ModelViewSet):
                 parent = Comment.objects.get(id=parent_id)
             except Comment.DoesNotExist:
                 return Response(
-                    {"error": "Parent comment does not exist"}, status=status.HTTP_400_BAD_REQUEST
+                    {"error": "Parent comment does not exist"},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
-        comment = Comment.objects.create(author=request.user, post=post, text=text, parent=parent)
+        comment = Comment.objects.create(
+            author=request.user, post=post, text=text, parent=parent
+        )
         serializer = self.get_serializer(comment)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    # def get_permissions(self):
+    #     """Instantiates and returns the list of permissions."""
+    #     if self.action != "comments":
+    #         self.permission_classes = [IsAuthenticated]
+    #     else:
+    #         self.permission_classes = []
+
+    #     return super().get_permissions()
