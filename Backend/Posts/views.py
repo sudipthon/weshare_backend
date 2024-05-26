@@ -240,11 +240,11 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(comment)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    # def get_permissions(self):
-    #     """Instantiates and returns the list of permissions."""
-    #     if self.action != "comments":
-    #         self.permission_classes = [IsAuthenticated]
-    #     else:
-    #         self.permission_classes = []
+    def get_permissions(self):
+        """Instantiates and returns the list of permissions."""
+        if self.action != "comments":
+            self.permission_classes = [IsAuthenticated]
+        else:
+            self.permission_classes = []
 
-    #     return super().get_permissions()
+        return super().get_permissions()
