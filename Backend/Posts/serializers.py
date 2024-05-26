@@ -70,6 +70,7 @@ class CommentSerializer(serializers.ModelSerializer):
     #     if obj.reply is not None:
     #         return CommentSerializer(obj.reply).data
     #     return None
+    
     def get_replies(self, obj):
         replies = Comment.objects.filter(reply=obj)
         return CommentSerializer(replies, many=True).data
