@@ -57,7 +57,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return response
         else:
             return Response(
-                {"error": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Please enter the correct details"}, status=status.HTTP_400_BAD_REQUEST
             )
 
     @action(detail=False, methods=["post"])
