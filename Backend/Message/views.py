@@ -30,18 +30,6 @@ class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
     permission_classes = [IsAuthenticated]
 
-    # def get_queryset(self):
-    #     return Messages.objects.filter(conversation__participants=self.request.user)
-
-    # def get_queryset(self):
-    #     return Messages.objects.filter(conversation__id=self.kwargs["conversation_pk"])
-
-    # def get_queryset(self):
-    #     conversation = Conversation.objects.get(id=self.kwargs["conversation_pk"])
-    #     if self.request.user not in conversation.participants.all():
-    #         raise PermissionDenied("You do not have permission to access this conversation.")
-    #     return Messages.objects.filter(conversation__id=self.kwargs["conversation_pk"])
-
     def get_queryset(self):
         try:
             conversation = Conversation.objects.get(id=self.kwargs["conversation_pk"])
@@ -58,40 +46,6 @@ class MessageViewSet(viewsets.ModelViewSet):
 
         return Messages.objects.filter(conversation__id=self.kwargs["conversation_pk"])
 
-    # def create(self, request, *args, **kwargs):
-    #     # receiver_id = request.data.get("receiver")
-    #     # receiver = User.objects.get(id=receiver_id)
-    #     if not receiver:
-    #         return Response(
-    #             {"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST
-    #         )
-
-    #     conversation, created = Conversation.objects.get_or_create(
-    #         participants__in=[request.user, receiver], participants__count=2
-    #     )
-
-    #     request.data["conversation"] = conversation.id
-    #     request.data["author"] = request.user.id
-    #     return super().create(request, *args, **kwargs)
-
-    # def create(self, request, *args, **kwargs):
-    #     conversation_id = request.data.get("conversation")
-    #     conversation, created = Conversation.objects.get_or_create(id=conversation_id)
-
-    #     if created:
-    #         # If the conversation was just created, add the current user and the receiver as participants
-    #         conversation.participants.add(request.user)
-    #         receiver_id = request.data.get("receiver")
-    #         receiver = User.objects.get(id=receiver_id)
-    #         if receiver:
-    #             conversation.participants.add(receiver)
-    #         else:
-    #             return Response(
-    #                 {"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST
-    #             )
-    #     request.data["conversation"] = conversation.id
-    #     return super().create(request, *args, **kwargs)
-
     def create(self, request, *args, **kwargs):
         receiver_id = request.data.get("receiver")
         receiver = User.objects.get(id=receiver_id)
@@ -99,11 +53,6 @@ class MessageViewSet(viewsets.ModelViewSet):
             return Response(
                 {"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST
             )
-
-        # Look for a conversation that includes both the current user and the receiver
-        # conversation = Conversation.objects.filter(
-        #     participants__in=[request.user, receiver]
-        # ).distinct()
 
         conversation = (
             Conversation.objects.filter(participants__in=[request.user, receiver])

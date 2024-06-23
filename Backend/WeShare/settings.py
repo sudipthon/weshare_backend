@@ -37,6 +37,7 @@ CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "http://192.168.1.73:8000"]  # 
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -87,6 +88,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "WeShare.wsgi.application"
+ASGI_APPLICATION = "WeShare.asgi.application"
 
 
 # Database
@@ -169,3 +171,12 @@ REST_FRAMEWORK = {
 # MEDIA_URL = "/media/"
 # # Default primary key field type
 # # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
