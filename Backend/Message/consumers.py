@@ -1,5 +1,7 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
+from channels.db import database_sync_to_async
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
 
@@ -27,7 +29,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
-            'message': message
+            'message': message+'hi'
         }))
       
 
