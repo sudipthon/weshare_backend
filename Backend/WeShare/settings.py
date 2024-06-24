@@ -180,3 +180,10 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+
+import environ
+
+env = environ.Env()
+environ.Env.read_env()  # reads the .env file
+
