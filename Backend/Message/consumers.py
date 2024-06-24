@@ -23,38 +23,41 @@ def get_messages(conversation_id,limit=10,offset=0):
     return [{"author": message.author.username, "text": message.text, "created_at": message.time_stamp.isoformat()} for message in messages]
    
    
-# def get_conversations(user):
-#     # Fetch all conversations for the user
-#     return Conversation.objects.filter(conversations=user)
+def get_conversations(user):
+    # Fetch all conversations for the user
+    return Conversation.objects.filter(conversations=user)
 
-# class ConversationConsumer(AsyncWebsocketConsumer):
-#     async def connect(self):
-#         query_string = parse_qs(self.scope['query_string'].decode())
-#         token_key = query_string.get('token', [None])[0]
-#         user=await get_user_from_token(token_key)
-#         if user is None:
-#             await self.close()
-#         self.user=user
-#         await self.accept()
+class ConversationConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        query_string = parse_qs(self.scope['query_string'].decode())
+        token_key = query_string.get('token', [None])[0]
+        user=await get_user_from_token(token_key)
+        if user is None:
+            await self.close()
+        self.user=user
+        await self.accept()
         
-#     async def fetch_and_send_conversations(self):
-#         conversations = await get_conversations(self.user)
-#         serialized_conversations = [
-#             {
-#                 'id': conversation.id,
-#                 'title': conversation.title,
-#                 'created_at': conversation.created_at.isoformat(),
-#                 # Add more fields as needed
-#             }
-#             for conversation in conversations
-#         ]
+    async def fetch_and_send_conversations(self):
+        conversations = await get_conversations(self.user)
+        serialized_conversations = [
+            {
+                'id': conversation.id,
+                'title': conversation.title,
+                'created_at': conversation.created_at.isoformat(),
+                # Add more fields as needed
+            }
+            for conversation in conversations
+        ]
 
-#         # Send the list of conversations to the client
-#         await self.send(text_data=json.dumps({
-#             'type': 'conversations_list',
-#             'conversations': serialized_conversations
-#         }))
+        # Send the list of conversations to the client
+        await self.send(text_data=json.dumps({
+            'type': 'conversations_list',
+            'conversations': serialized_conversations
+        }))
         
+    async def disconnect(self, code):
+        return await super().disconnect(code)
+    
 class ChatConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
