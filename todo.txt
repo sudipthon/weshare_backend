@@ -1,0 +1,5 @@
+add option for delete and update of the post
+upvote and unupvote posts
+search feature
+make each image of the post clickable
+contentevery word first letter is being capitalized ,solve it

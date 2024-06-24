@@ -14,7 +14,7 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+import os
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -32,14 +32,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://192.168.1.73:8000"
-]  # if
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "http://192.168.1.73:8000"]  # if
 
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -47,6 +45,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "Account.apps.AccountConfig",
+    # packages
+    "django_extensions",
     # rest related apps
     "corsheaders",
     "rest_framework",
@@ -54,11 +54,11 @@ INSTALLED_APPS = [
     # custom apps
     "Posts",
     "Message",
-    # 'django_extensions',
 ]
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -88,6 +88,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "WeShare.wsgi.application"
+ASGI_APPLICATION = "WeShare.asgi.application"
 
 
 # Database
@@ -135,10 +136,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles/")
+
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media/"
 # Default primary key field type
@@ -154,4 +158,32 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 6,
 }
+
+
+# STATIC_URL = "/home/myusername/myproject/static/"
+# STATICFILES_DIRS = [
+#     BASE_DIR / "statics",
+# ]
+# STATIC_ROOT="/home/myusername/myproject/staticfiles/"
+# MEDIA_URL = "/media/"
+# # Default primary key field type
+# # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+
+
+import environ
+
+env = environ.Env()
+environ.Env.read_env()  # reads the .env file
+

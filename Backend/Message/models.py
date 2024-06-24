@@ -2,16 +2,39 @@ from django.db import models
 from Account.models import User
 
 
-class Conversation(models.Model):
-    participants = models.ManyToManyField(User, related_name='conversations')
 
-class Message(models.Model):
-    content = models.TextField()
-    time_stamp = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE,related_name='messages')
-    image=models.ImageField(upload_to='images/messages', default='default.jpg')
+
+from django.db import models
+
+
+class Conversation(models.Model):
+    participants = models.ManyToManyField(User, related_name="conversations")
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.content
-    
+        return f"Conversation between {', '.join([user.username for user in self.participants.all()])}  {self.id}"
+
+    class Meta:
+        ordering = [
+            "-updated_at",
+        ]
+
+
+class Messages(models.Model):
+    conversation = models.ForeignKey(
+        Conversation, related_name="messages", on_delete=models.CASCADE
+    )
+    author = models.ForeignKey(
+        User, related_name="sent_messages", on_delete=models.SET_NULL, null=True
+    )
+    text = models.TextField()
+    time_stamp = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(upload_to="message_images/", blank=True, null=True)
+
+    def __str__(self):
+        return self.text
+
+    class Meta:
+        ordering = [
+            "time_stamp",
+        ]

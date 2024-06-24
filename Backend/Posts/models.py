@@ -27,14 +27,17 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     # image = models.ImageField(upload_to="images/posts", default="default.jpg")
     share_count = models.PositiveIntegerField(default=0, blank=True)
-    vote_count = models.PositiveBigIntegerField(default=0, blank=True)
-    tags = models.ManyToManyField(Tag, related_name="tag_posts")
+    upvotes = models.ManyToManyField(User, related_name="votes", blank=True)
+    tags = models.ManyToManyField(Tag, related_name="tag_posts", blank=True)
     flag = models.CharField(max_length=30, choices=OPTIONS, blank=True, null=True)
     post_type = models.CharField(max_length=30, choices=post_type)
     
+    class Meta:
+        ordering = ["-time_stamp"]
 
     def __str__(self):
-        return f"{self.content[:20]}--{self.id}"
+        return f"{self.content[:50]}--{self.id}"
+    
 
 class Image(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="images")
@@ -45,10 +48,12 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField(max_length=100, null=True, blank=True)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
+    reply = models.ForeignKey(
+        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="replies"
+    )
 
     def __str__(self):
-        return self.author.email
-
+        return f"{self.text}>{self.author.email}"
 
 class Reports(models.Model):
     post = models.ForeignKey(
@@ -59,3 +64,5 @@ class Reports(models.Model):
         User, on_delete=models.CASCADE, related_name="author_reports"
     )
     
+
+
