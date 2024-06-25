@@ -23,9 +23,10 @@ from django.urls import re_path
 
 # Initialize Django ASGI application early to ensure the AppRegistry
 # is populated before importing code that may import ORM models.
+from django.conf import settings
 from Message import consumers
 django_asgi_app = get_asgi_application()
-# django.setup()
+
 
 application = ProtocolTypeRouter({
     "http": django_asgi_app,

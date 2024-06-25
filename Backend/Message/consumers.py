@@ -5,38 +5,10 @@ from Message.models import Conversation, Messages
 from Account.models import User
 from Message.middleware import get_user_from_token
 from urllib.parse import parse_qs
+from Message.service import *
 
 import logging
-
 logger = logging.getLogger(__name__)
-
-database_sync_to_async
-def get_user_details(user):
-    user=User.objects.get(id=user)
-    return {"username": user.username, "id": user.id, "pic": user.pic.url}
-
-@database_sync_to_async
-def create_message(conversation_id, message,user):
-    conversation=Conversation.objects.get(id=conversation_id)
-    message = Messages.objects.create(conversation=conversation, author=user, text=message)
-    message.save()
-
-@database_sync_to_async
-def get_messages(conversation_id,limit=10,offset=0):
-    conversation=Conversation.objects.get(id=conversation_id)
-    messages=Messages.objects.filter(conversation=conversation).order_by("-time_stamp")[offset:limit]
-    return [{"author": message.author.username, "text": message.text, "created_at": message.time_stamp.isoformat()} for message in messages]
-   
-@database_sync_to_async
-def get_conversations(user):
-    # Fetch all conversations for the user
-    conv=Conversation.objects.filter(participants=user)
-    conv=[{"id": conversation.id, "participants": [get_user_details(u.id) for u in conversation.participants.all() if u!=user], "updated_at": conversation.updated_at.isoformat()} for conversation in conv]
-    # for conversation in conv:
-        
-    #     # conversation.participants=[get_user_details(user) for user in conversation.participants.all() if user!=user]
-        
-    return conv
 
 class ConversationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -49,6 +21,7 @@ class ConversationConsumer(AsyncWebsocketConsumer):
         self.user=user
         
         await self.accept()
+        
         await self.fetch_and_send_conversations()
 
     
@@ -61,7 +34,6 @@ class ConversationConsumer(AsyncWebsocketConsumer):
         
     async def fetch_and_send_conversations(self):
         conversations = await get_conversations(self.user)
-        # logger.info(f"Found {len(conversations)} conversations for user {self.user.username}")
     
 
         # Send the list of conversations to the client
@@ -86,7 +58,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None, bytes_data=None):
         data = json.loads(text_data)
         message_type = data.get('type')
-
         if message_type == 'chat_message':
             message = data['message']
             await create_message(self.conversation_id, message, self.scope['user'])
@@ -94,7 +65,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 self.room_group_name, {
                     "type": "chat_message",
                     "message": message,
-                    "author": self.scope['user'].username
                 }
             )
         elif message_type == 'fetch_messages':
@@ -104,12 +74,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({
                 'type': 'previous_messages',
                 'messages': messages
+                
             }))
     
     async def chat_message(self, event):
         message = event['message']
-        await create_message(self.conversation_id, message, self.scope['user'])
-        # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message,
             'author': self.scope['user'].username,
@@ -118,4 +87,3 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-        # Called when the socket closes
