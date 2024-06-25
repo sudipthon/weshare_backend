@@ -19,9 +19,7 @@ class ConversationConsumer(AsyncWebsocketConsumer):
             logger.warning("Invalid token provided. Connection closed.")
             await self.close()
         self.user=user
-        
         await self.accept()
-        
         await self.fetch_and_send_conversations()
 
     
@@ -34,8 +32,6 @@ class ConversationConsumer(AsyncWebsocketConsumer):
         
     async def fetch_and_send_conversations(self):
         conversations = await get_conversations(self.user)
-    
-
         # Send the list of conversations to the client
         await self.send(text_data=json.dumps({
             'type': 'conversations_list',
@@ -58,9 +54,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None, bytes_data=None):
         data = json.loads(text_data)
         message_type = data.get('type')
+        receiver=data.get('receiver')
+        # self.receiver=receiver
         if message_type == 'chat_message':
             message = data['message']
-            await create_message(self.conversation_id, message, self.scope['user'])
+            await create_message(self.conversation_id, message, self.scope['user'],receiver)
             await self.channel_layer.group_send(
                 self.room_group_name, {
                     "type": "chat_message",
