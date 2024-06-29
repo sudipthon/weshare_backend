@@ -23,9 +23,10 @@ class ConversationConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data=None):
         logger.info(text_data)
-        logger.error()
         data = json.loads(text_data)
+        
         message_type = data.get("type")
+        
         if message_type == "fetch_conversations":
             await self.fetch_and_send_conversations()
 
