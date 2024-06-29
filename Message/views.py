@@ -32,7 +32,8 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         try:
-            conversation = Conversation.objects.get(id=self.kwargs["conversation_pk"])
+            conversation = Conversation.objects.get(
+                id=self.kwargs["conversation_pk"])
         except Conversation.DoesNotExist:
             raise Http404("Conversation not found.")
 
@@ -55,7 +56,8 @@ class MessageViewSet(viewsets.ModelViewSet):
             )
 
         conversation = (
-            Conversation.objects.filter(participants__in=[request.user, receiver])
+            Conversation.objects.filter(
+                participants__in=[request.user, receiver])
             .annotate(num_participants=Count("participants"))
             .filter(num_participants=2)
             .distinct()
