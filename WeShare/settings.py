@@ -1,10 +1,11 @@
 
 
 # import environ
+import dj_database_url
 import os
 from pathlib import Path
 
-DJANGO_SETTINGS_MODULE='WeShare.settings'
+DJANGO_SETTINGS_MODULE = 'WeShare.settings'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -96,6 +97,17 @@ DATABASES = {
     }
 }
 
+
+# EXTERNAL_DATABASE_URL = 'postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg-cq00fk6ehbks73e4ihc0-a.oregon-postgres.render.com/weshare_ger0'
+# INTERNAL_DATABASE_URL = 'postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg-cq00fk6ehbks73e4ihc0-a/weshare_ger0'
+
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=EXTERNAL_DATABASE_URL,
+#         conn_max_age=600
+#     )
+
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

@@ -38,3 +38,8 @@ his is a good start for user authentication in a Django Rest Framework applicati
   actions
     set cookies from API
     check how to get the user id for changing password
+
+
+commands
+daphne -p 8000 WeShare.asgi:application
+python -m gunicorn mysite.asgi:application -k uvicorn.workers.UvicornWorker
