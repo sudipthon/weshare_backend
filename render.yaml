@@ -1,16 +1,17 @@
-# databases:
-#   - name: weshare
-#     plan: free
-#     databaseName: weshare
-#     user: sudip
+databases:
+  - name: weshare
+    plan: free
+    databaseName: weshare
+    user: sudip
 
 services:
   - type: web
     plan: free
-    name: WeShare
+    name: weshare
     runtime: python
     buildCommand: "./build.sh"
-    startCommand: "python -m gunicorn WeShare.asgi:application -k uvicorn.workers.UvicornWorker"
+    startCommand: "python -m gunicorn WeShare.asgi:application -k uvicorn.workers.UvicornWorker --timeout 120 --workers 4"
+
     # envVars:
     #   - key: DATABASE_URL
     #     fromDatabase:
