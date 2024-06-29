@@ -27,7 +27,8 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000",
-                        "http://192.168.1.73:8000"]  # if
+                        "http://192.168.1.73:8000",
+                        'https://weshare-mo9u.onrender.com']  # if
 
 # Application definition
 
