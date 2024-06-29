@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     "Account.apps.AccountConfig",
     # packages
     "django_extensions",
-    "django.contrib.sites",
+    # "django.contrib.sites",
     # rest related apps
     "corsheaders",
     "rest_framework",
