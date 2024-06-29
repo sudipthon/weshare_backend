@@ -101,7 +101,6 @@ ASGI_APPLICATION = "WeShare.asgi.application"
 
 EXTERNAL_DATABASE_URL = 'postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg-cq00fk6ehbks73e4ihc0-a.oregon-postgres.render.com/weshare_ger0'
 INTERNAL_DATABASE_URL = 'postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg-cq00fk6ehbks73e4ihc0-a/weshare_ger0'
-
 DATABASES = {
     'default': dj_database_url.config(
         default=INTERNAL_DATABASE_URL,
