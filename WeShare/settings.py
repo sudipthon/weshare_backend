@@ -106,7 +106,13 @@ DATABASES = {
         default=INTERNAL_DATABASE_URL,
         conn_max_age=600
     )
+}
 
+DATABASES={
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        
+    }
 }
 
 # Password validation
