@@ -103,7 +103,7 @@ INTERNAL_DATABASE_URL = 'postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=EXTERNAL_DATABASE_URL,
+        default=INTERNAL_DATABASE_URL,
         conn_max_age=600
     )
 
