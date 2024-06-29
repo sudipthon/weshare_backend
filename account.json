@@ -1,0 +1,242 @@
+[
+    {
+        "model": "Account.user",
+        "pk": 4,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$DvqkQmvdXc0JbPo1fPPF6I$1ey9jSPdn2lTH/q0BNByhJfA/jDQ4F0ooQ+GGOLYoqg=",
+            "last_login": "2024-06-24T13:30:02.404Z",
+            "is_superuser": true,
+            "first_name": "",
+            "last_name": "",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2024-05-16T08:53:03Z",
+            "username": "sudip",
+            "is_verified": false,
+            "email": "sudip@gmail.com",
+            "pic": "joro.jpg",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "Account.user",
+        "pk": 5,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$DDzGtfanqnrQ6vcJdgyyWL$jQS2uqZ3tyyJhoy1kURbjaVZ50cDl7JcRq39vObUFxE=",
+            "last_login": null,
+            "is_superuser": false,
+            "first_name": "",
+            "last_name": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2024-05-16T08:55:17Z",
+            "username": "Nisha KC",
+            "is_verified": false,
+            "email": "nisha@gmail.com",
+            "pic": "nisha.jpg",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "Account.user",
+        "pk": 6,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$RFQ9MDfyrGUizO3IEy5GVX$EIBC9MagEvZSskdvGcB9+8iMmwwbcBrUo1YNx2knpGU=",
+            "last_login": null,
+            "is_superuser": false,
+            "first_name": "",
+            "last_name": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2024-05-16T08:55:49Z",
+            "username": "Chhaya KC",
+            "is_verified": false,
+            "email": "chhaya@gmail.com",
+            "pic": "chhaya_nzxauFa.jpg",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "Account.user",
+        "pk": 7,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$ZrTLdIU5Upf1Nd23ZOjDKL$1xMDi9Is/F0nLTb0574NAQlWyPJ3p0Biai4d5skLvSA=",
+            "last_login": null,
+            "is_superuser": false,
+            "first_name": "",
+            "last_name": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2024-05-16T08:56:16Z",
+            "username": "SHushma Khattri",
+            "is_verified": false,
+            "email": "shushma@gmail.com",
+            "pic": "shushma_profile.jpg",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "Account.user",
+        "pk": 8,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$Yg6LdqZNZMzTfU72lp0HXE$WYRilbgHkLM+bWffNEslft5xMdLf7O269szuRD6Uk9Y=",
+            "last_login": null,
+            "is_superuser": false,
+            "first_name": "",
+            "last_name": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2024-05-16T08:56:45Z",
+            "username": "Dipen Khadka",
+            "is_verified": false,
+            "email": "dipen@gmail.com",
+            "pic": "download.jpeg",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "Account.user",
+        "pk": 9,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$lRXoKolfC3f4nQjFRSnAuH$tAMvoNX0omppu8B5N013c4lEpNunkTc3XDr98Y0kkPM=",
+            "last_login": null,
+            "is_superuser": false,
+            "first_name": "",
+            "last_name": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2024-05-16T08:59:18Z",
+            "username": "Ashutosh",
+            "is_verified": false,
+            "email": "aashutosh@gmail.com",
+            "pic": "ashutosh.jpg",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "Account.user",
+        "pk": 10,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$W1qifArgoKtY40vDnnjriS$Guw0VXDhmhJ/OyGs9Pe1lKAWB68VNPaLupyxIKFm/UM=",
+            "last_login": null,
+            "is_superuser": false,
+            "first_name": "",
+            "last_name": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2024-05-16T09:29:43Z",
+            "username": "Surendra",
+            "is_verified": false,
+            "email": "surendra@gmail.com",
+            "pic": "suendra_upretti.jpg",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "Account.user",
+        "pk": 11,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$6h0KTTHWbqDPQFAGUsRLYI$EGV7xwL1sB9HJtwKL1NIgxh9HDUIgnVOSyXlFIKnmZU=",
+            "last_login": null,
+            "is_superuser": false,
+            "first_name": "",
+            "last_name": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2024-05-16T09:30:00Z",
+            "username": "Even",
+            "is_verified": false,
+            "email": "Even@gmail.com",
+            "pic": "even_magar.jpg",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "Account.user",
+        "pk": 12,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$nZxr4rBEW2eWdsvePiDRY3$NGp5PS0Hn9Nc3NBTrr1Th7FzXaiA3Pk80zpJWebi4Wo=",
+            "last_login": null,
+            "is_superuser": false,
+            "first_name": "",
+            "last_name": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2024-05-16T09:30:20Z",
+            "username": "Yogesh Shrestha",
+            "is_verified": false,
+            "email": "yogesh@gmail.com",
+            "pic": "yogesh_shrestha.jpg",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "Account.user",
+        "pk": 13,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$BCcbUPfC9ViFZM0KOHyVmS$IzixxpseppjMkH6HB3quHmbJVC2D5btRpQyVOwg1wAE=",
+            "last_login": null,
+            "is_superuser": false,
+            "first_name": "",
+            "last_name": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2024-05-16T09:30:56Z",
+            "username": "Shekhar",
+            "is_verified": false,
+            "email": "shekhar@gmail.com",
+            "pic": "shekhar_joshi.jpg",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "Account.user",
+        "pk": 14,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$ahvaVwKDACyLdUVCdSSGie$VopDpceEMEZVBB+WnziKcp7P1CGA41cxPhtw5BmAlMk=",
+            "last_login": null,
+            "is_superuser": false,
+            "first_name": "",
+            "last_name": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2024-05-16T09:31:49Z",
+            "username": "Samir",
+            "is_verified": false,
+            "email": "samir@gmail.com",
+            "pic": "samir_chettri.jpg",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "Account.user",
+        "pk": 15,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$7lgPX8jNW4rXfDH6OBfBKa$figrmbh2Kg5B4hUUTsUPy/URKQHSyrszTq0uQwsQq24=",
+            "last_login": null,
+            "is_superuser": false,
+            "first_name": "",
+            "last_name": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2024-05-16T09:37:44Z",
+            "username": "Sujan",
+            "is_verified": false,
+            "email": "sujan@gmail.com",
+            "pic": "sujan_chettri.jpg",
+            "groups": [],
+            "user_permissions": []
+        }
+    }
+]
