@@ -175,17 +175,51 @@ REST_FRAMEWORK = {
 # # Default primary key field type
 # # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
+
+
+redis_host = 'redis-16026.c81.us-east-1-2.ec2.redns.redis-cloud.com'
+redis_port = 16026
+redis_password = 'p6J3UvtNJ43sfyvdgfEG2FdMjLuyVJfV'
+
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [("127.0.0.1", 6379)],
+#         },
+#     },
+# }
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [f"redis://:{redis_password}@{redis_host}:{redis_port}"],
         },
     },
 }
-
-
 env = environ.Env()
 environ.Env.read_env()  # reads the .env file
 
 SITE_ID = 1
+
+# import redis
+
+
+# redis_host = 'redis-16026.c81.us-east-1-2.ec2.redns.redis-cloud.com'
+# redis_port = 16026
+# redis_password = 'p6J3UvtNJ43sfyvdgfEG2FdMjLuyVJfV'
+
+# client = redis.StrictRedis(
+#     host=redis_host,
+#     port=redis_port,
+#     password=redis_password,
+#     decode_responses=True
+# )
+
+# try:
+#     response = client.ping()
+#     if response:
+#         print("Connected to Redis")
+# except redis.ConnectionError:
+#     print("Failed to connect to Redis")
