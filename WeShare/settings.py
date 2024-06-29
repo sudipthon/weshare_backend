@@ -111,15 +111,14 @@ INTERNAL_DATABASE_URL = "postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "host": "dpg-cq00fk6ehbks73e4ihc0-a",
-        "name": "weshare",
-        "user": "sudip",
-        "password": "SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv",
-        "port": 5432,
-        "conn_max_age": 600,
+        "HOST": "dpg-cq00fk6ehbks73e4ihc0-a",
+        "NAME": "weshare",
+        "USER": "sudip",
+        "PASSWORD": "SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv",
+        "PORT": 5432,
+        "CONN_MAX_AGE": 600,
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
