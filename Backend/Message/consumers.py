@@ -24,9 +24,9 @@ class ConversationConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None):
         logger.info(text_data)
         data = json.loads(text_data)
-        
+
         message_type = data.get("type")
-        
+
         if message_type == "fetch_conversations":
             await self.fetch_and_send_conversations()
 
@@ -90,3 +90,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+
+
+# https://bug12.pythonanywhere.com/
+# ws://bug12.pythonanywhere.com/ws/conversations/?token=649ea14d67d3d3e03beccaf8b4fbb20759562d8
+# ws://bug12.pythonanywhere.com/ws/chat/1/?token=649ea14d67d3d3e03beccaf8b4fbb20759562d87
+
+# ws://localhost:8000/ws/conversations/?token=649ea14d67d3d3e03beccaf8b4fbb20759562d87
+# ws://localhost:8000/ws/chat/1/?token=649ea14d67d3d3e03beccaf8b4fbb20759562d87
+

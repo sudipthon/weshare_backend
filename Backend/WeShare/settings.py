@@ -14,6 +14,12 @@ import environ
 import os
 from pathlib import Path
 
+env = environ.Env(
+    DEBUG=(bool, False)
+
+)
+environ.Env.read_env()  
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -176,7 +182,6 @@ REST_FRAMEWORK = {
 # # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 
-
 redis_host = 'redis-16026.c81.us-east-1-2.ec2.redns.redis-cloud.com'
 redis_port = 16026
 redis_password = 'p6J3UvtNJ43sfyvdgfEG2FdMjLuyVJfV'
@@ -198,10 +203,14 @@ CHANNEL_LAYERS = {
         },
     },
 }
-env = environ.Env()
-environ.Env.read_env()  # reads the .env file
+# env = environ.Env(
+#     DEBUG=(bool, False)
 
-SITE_ID = 1
+# )
+# environ.Env.read_env()  # reads the .env file
+
+
+# SITE_ID = 1
 
 # import redis
 
