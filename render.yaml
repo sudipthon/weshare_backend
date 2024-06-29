@@ -13,8 +13,8 @@ services:
     buildCommand: "./build.sh"
     startCommand: "python -m gunicorn WeShare.asgi:application -k uvicorn.workers.UvicornWorker --timeout 120 --workers 4"
 
-    envVars:
-      DATABASE_URL: 'postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg-cq00fk6ehbks73e4ihc0-a/weshare_ger0'
+ Advanced:
+       DATABASE_URL: 'postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg-cq00fk6ehbks73e4ihc0-a/weshare_ger0'
       - key: SECRET_KEY
         generateValue: true
       - key: WEB_CONCURRENCY

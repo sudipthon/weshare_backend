@@ -1,11 +1,9 @@
-
-
 # import environ
 import dj_database_url
 import os
 from pathlib import Path
 
-DJANGO_SETTINGS_MODULE = 'WeShare.settings'
+DJANGO_SETTINGS_MODULE = "WeShare.settings"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,9 +24,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = ["http://localhost:3000",
-                        "http://192.168.1.73:8000",
-                        'https://weshare-mo9u.onrender.com']  # if
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://192.168.1.73:8000",
+    "https://weshare-mo9u.onrender.com",
+]  # if
 
 # Application definition
 
@@ -99,8 +99,8 @@ ASGI_APPLICATION = "WeShare.asgi.application"
 # }
 
 
-# EXTERNAL_DATABASE_URL = 'postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg-cq00fk6ehbks73e4ihc0-a.oregon-postgres.render.com/weshare_ger0'
-# INTERNAL_DATABASE_URL = 'postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg-cq00fk6ehbks73e4ihc0-a/weshare_ger0'
+EXTERNAL_DATABASE_URL = "postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg-cq00fk6ehbks73e4ihc0-a.oregon-postgres.render.com/weshare_ger0"
+INTERNAL_DATABASE_URL = "postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg-cq00fk6ehbks73e4ihc0-a/weshare_ger0"
 # DATABASES = {
 #     'default': dj_database_url.config(
 #         default=INTERNAL_DATABASE_URL,
@@ -108,12 +108,17 @@ ASGI_APPLICATION = "WeShare.asgi.application"
 #     )
 # }
 
-# DATABASES={
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-        
-#     }
-# }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "host": "dpg-cq00fk6ehbks73e4ihc0-a",
+        "name": "weshare",
+        "user": "sudip",
+        "password": "SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv",
+        "port": 5432,
+        "conn_max_age": 600,
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -186,9 +191,9 @@ REST_FRAMEWORK = {
 # # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 
-redis_host = 'redis-16026.c81.us-east-1-2.ec2.redns.redis-cloud.com'
+redis_host = "redis-16026.c81.us-east-1-2.ec2.redns.redis-cloud.com"
 redis_port = 16026
-redis_password = 'p6J3UvtNJ43sfyvdgfEG2FdMjLuyVJfV'
+redis_password = "p6J3UvtNJ43sfyvdgfEG2FdMjLuyVJfV"
 
 # CHANNEL_LAYERS = {
 #     "default": {
