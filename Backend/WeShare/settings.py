@@ -1,6 +1,6 @@
 
 
-import environ
+# import environ
 import os
 from pathlib import Path
 
@@ -82,7 +82,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "WeShare.wsgi.application"
+# WSGI_APPLICATION = "WeShare.wsgi.application"
 ASGI_APPLICATION = "WeShare.asgi.application"
 
 
