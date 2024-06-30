@@ -24,13 +24,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://192.168.1.73:8000",
-    "https://weshare-mo9u.onrender.com",
-    "http://localhost:5173"
-    "*"
-]  # if
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "http://192.168.1.73:8000",
+#     "https://weshare-mo9u.onrender.com",
+#     "http://localhost:5173"
+# ]  # if
 
 # Application definition
 
@@ -106,7 +105,7 @@ INTERNAL_DATABASE_URL = "postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg
 # INTERNAL_DATABASE_URL= os.environ.get("INTERNAL_DATABASE_URL")
 DATABASES = {
     "default": dj_database_url.config(
-        default=INTERNAL_DATABASE_URL,
+        default=EXTERNAL_DATABASE_URL,
         conn_max_age=600,
     )
 }
