@@ -28,6 +28,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://192.168.1.73:8000",
     "https://weshare-mo9u.onrender.com",
+    "http://localhost:5173"
+    "*"
 ]  # if
 
 # Application definition
