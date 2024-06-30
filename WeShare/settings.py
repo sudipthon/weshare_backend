@@ -103,11 +103,14 @@ EXTERNAL_DATABASE_URL = "postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg
 INTERNAL_DATABASE_URL = "postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg-cq00fk6ehbks73e4ihc0-a/weshare_ger0"
 # INTERNAL_DATABASE_URL= os.environ.get("INTERNAL_DATABASE_URL")
 DATABASES = {
-    'default': dj_database_url.parse(
-        EXTERNAL_DATABASE_URL)
+    "default": dj_database_url.config(
+        default=EXTERNAL_DATABASE_URL,
+        conn_max_age=600,
+    )
 }
 
 # DATABASES = {
+
 #     "default": {q
 
 #         "ENGINE": "django.db.backends.postgresql",
