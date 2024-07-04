@@ -18,6 +18,8 @@ class ConversationConsumer(AsyncWebsocketConsumer):
             logger.warning("Invalid token provided. Connection closed.")
             await self.close()
         self.user = user
+        user_group_name = f"user_{self.user.id}"
+        await self.channel_layer.group_add(user_group_name, self.channel_name)
 
         await self.accept()
         await self.fetch_and_send_conversations()
@@ -40,6 +42,10 @@ class ConversationConsumer(AsyncWebsocketConsumer):
             )
         )
 
+    # Add this method to handle the update signal
+    async def update_conversations(self, event):
+        await self.fetch_and_send_conversations()
+        
     async def disconnect(self, code):
         return await super().disconnect(code)
 
@@ -69,16 +75,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     "message": message,
                 },
             )
+
+            # After saving the message successfully
+            await self.channel_layer.group_send(
+                f"user_{self.scope['user'].id}",
+                {
+                    "type": "update_conversations",
+                },
+            )
+            await self.channel_layer.group_send(
+                f"user_{receiver}",
+                {
+                    "type": "update_conversations",
+                },
+            )
+
         elif message_type == "fetch_messages":
             limit = data.get("limit", 20)
             offset = data.get("offset", 0)
-            # messages = await get_messages(self.conversation_id, limit, offset)
-            # await self.send(
-            #     text_data=json.dumps(
-            #         {"type": "previous_messages", "messages": messages}
-            #     )
-            # )
-            # fetch_messages_task = self.fetch_messages(limit, offset)
             await self.fetch_messages(limit, offset)
 
     async def fetch_messages(self, limit, offset):
