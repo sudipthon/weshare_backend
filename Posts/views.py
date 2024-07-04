@@ -70,9 +70,6 @@ class PostViewSet(viewsets.ModelViewSet):
     @action(detail=False, url_path="exchange")
     def list_exchanges(self, request, *args, **kwargs):
         """Return a list of exchange posts."""
-
-        # self.pagination_class = CustomPageNumberPagination  # set the custom pagination class
-
         exchanges = Post.objects.filter(post_type="Exchange")
         page = self.paginate_queryset(exchanges)
         if not exchanges:

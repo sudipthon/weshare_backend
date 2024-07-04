@@ -5,6 +5,7 @@ from urllib.parse import parse_qs
 from Message.service import *
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 
@@ -50,6 +51,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_group_name = f"chat_{self.conversation_id}"
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
+        await self.fetch_messages(20, 0)
 
     async def receive(self, text_data=None, bytes_data=None):
         data = json.loads(text_data)
@@ -70,12 +72,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
         elif message_type == "fetch_messages":
             limit = data.get("limit", 20)
             offset = data.get("offset", 0)
-            messages = await get_messages(self.conversation_id, limit, offset)
-            await self.send(
-                text_data=json.dumps(
-                    {"type": "previous_messages", "messages": messages}
-                )
-            )
+            # messages = await get_messages(self.conversation_id, limit, offset)
+            # await self.send(
+            #     text_data=json.dumps(
+            #         {"type": "previous_messages", "messages": messages}
+            #     )
+            # )
+            # fetch_messages_task = self.fetch_messages(limit, offset)
+            await self.fetch_messages(limit, offset)
+
+    async def fetch_messages(self, limit, offset):
+        messages = await get_messages(self.conversation_id, limit, offset)
+        await self.send(
+            text_data=json.dumps({"type": "previous_messages", "messages": messages})
+        )
 
     async def chat_message(self, event):
         message = event["message"]
@@ -98,4 +108,3 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
 # ws://localhost:8000/ws/conversations/?token=649ea14d67d3d3e03beccaf8b4fbb20759562d87
 # ws://localhost:8000/ws/chat/1/?token=649ea14d67d3d3e03beccaf8b4fbb20759562d87
-
