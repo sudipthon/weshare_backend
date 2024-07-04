@@ -1,7 +1,8 @@
 from django.db import models
 from Account.models import User
-
-
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils import timezone
 
 
 from django.db import models
@@ -18,6 +19,10 @@ class Conversation(models.Model):
         ordering = [
             "-updated_at",
         ]
+    def save(self, *args, **kwargs):
+        if not self.id:  # If this is a new object, then set updated_at to now
+            self.updated_at = timezone.now()
+        super().save(*args, **kwargs)
 
 
 class Messages(models.Model):
@@ -36,5 +41,18 @@ class Messages(models.Model):
 
     class Meta:
         ordering = [
-            "time_stamp",
+            "-time_stamp",
         ]
+
+@property
+def last_message(self):
+        return self.messages.latest('time_stamp').text if self.messages.exists() else None
+    
+@receiver(post_save, sender=Messages)
+def update_conversation_timestamp(sender, instance, created, **kwargs):
+    if created:
+        conversation = instance.conversation
+        conversation.updated_at = (
+            timezone.now()
+        )  # Explicitly set updated_at to current time
+        conversation.save()

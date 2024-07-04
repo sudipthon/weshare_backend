@@ -71,11 +71,7 @@ def get_conversations(user):
                 if u != user
             ],
             "updated_at": conversation.updated_at.isoformat(),
-            "last_message": (
-                conversation.messages.all().last().text
-                if conversation.messages.all().last()
-                else None
-            ),
+            "last_message": conversation.last_message,
         }
         for conversation in conversation_objs
     ]
