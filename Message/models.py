@@ -19,10 +19,15 @@ class Conversation(models.Model):
         ordering = [
             "-updated_at",
         ]
+
     def save(self, *args, **kwargs):
         if not self.id:  # If this is a new object, then set updated_at to now
             self.updated_at = timezone.now()
         super().save(*args, **kwargs)
+
+    @property
+    def last_message(self):
+        return self.messages.latest("time_stamp").text if self.messages.exists() else None
 
 
 class Messages(models.Model):
@@ -44,10 +49,8 @@ class Messages(models.Model):
             "-time_stamp",
         ]
 
-@property
-def last_message(self):
-        return self.messages.latest('time_stamp').text if self.messages.exists() else None
-    
+
+
 @receiver(post_save, sender=Messages)
 def update_conversation_timestamp(sender, instance, created, **kwargs):
     if created:

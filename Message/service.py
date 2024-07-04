@@ -60,8 +60,7 @@ def get_messages(conversation_id, limit=10, offset=0):
 
 @database_sync_to_async
 def get_conversations(user):
-    # Fetch all conversations for the user
-    conversation_objs = Conversation.objects.filter(participants=user)
+    conversation_objs=user.conversations.all()
     conv_serialized = [
         {
             "id": conversation.id,
