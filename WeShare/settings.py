@@ -52,9 +52,11 @@ INSTALLED_APPS = [
     # custom apps
     "Posts",
     "Message",
+    "silk",
 ]
 
 MIDDLEWARE = [
+    "silk.middleware.SilkyMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -92,37 +94,30 @@ ASGI_APPLICATION = "WeShare.asgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
 
 EXTERNAL_DATABASE_URL = "postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg-cq00fk6ehbks73e4ihc0-a.oregon-postgres.render.com/weshare_ger0"
 INTERNAL_DATABASE_URL = "postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg-cq00fk6ehbks73e4ihc0-a/weshare_ger0"
+
 # INTERNAL_DATABASE_URL= os.environ.get("INTERNAL_DATABASE_URL")
+# DATABASES = {
+#     "default": dj_database_url.config(
+#         default=EXTERNAL_DATABASE_URL,
+#         conn_max_age=600,
+#     )
+# }
+
+
 DATABASES = {
-    "default": dj_database_url.config(
-        default=INTERNAL_DATABASE_URL,
-        conn_max_age=600,
-    )
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "weshare",
+        "USER": "sudip",
+        "PASSWORD": "sudip",
+        "HOST": "localhost",  # The IP address or domain of your PostgreSQL server
+        "PORT": "5432",  # Default PostgreSQL port
+    }
 }
 
-# DATABASES = {
-
-#     "default": {q
-
-#         "ENGINE": "django.db.backends.postgresql",
-#         "host": "dpg-cq00fk6ehbks73e4ihc0-a",
-#         "name": "weshare",
-#         "user": "sudip",
-#         "password": "SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv",
-#         "port": 5432,
-#         "conn_max_age": 600,
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -245,3 +240,6 @@ CHANNEL_LAYERS = {
 #         print("Connected to Redis")
 # except redis.ConnectionError:
 #     print("Failed to connect to Redis")
+
+
+SILKY_PYTHON_PROFILER = True

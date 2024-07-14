@@ -4,6 +4,8 @@ from Message.middleware import get_user_from_token
 from urllib.parse import parse_qs
 from Message.service import *
 
+
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -45,7 +47,7 @@ class ConversationConsumer(AsyncWebsocketConsumer):
     # Add this method to handle the update signal
     async def update_conversations(self, event):
         await self.fetch_and_send_conversations()
-        
+
     async def disconnect(self, code):
         return await super().disconnect(code)
 
@@ -57,22 +59,24 @@ class ChatConsumer(AsyncWebsocketConsumer):
         self.room_group_name = f"chat_{self.conversation_id}"
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
-        await self.fetch_messages(20, 0)
+        # await self.fetch_messages(10, 0)
 
     async def receive(self, text_data=None, bytes_data=None):
         data = json.loads(text_data)
         message_type = data.get("type")
-        receiver = data.get("receiver")
-        if message_type == "chat_message":
+        if message_type == "new_message":
             message = data["message"]
+            receiver = data["receiver"]
+            time_stamp = data["time_stamp"]
             await create_message(
-                self.conversation_id, message, self.scope["user"], receiver
+                self.conversation_id, message, self.scope["user"], receiver, time_stamp
             )
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
-                    "type": "chat_message",
+                    "type": "new_message",
                     "message": message,
+                    "time_stamp": time_stamp,
                 },
             )
 
@@ -91,7 +95,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
 
         elif message_type == "fetch_messages":
-            limit = data.get("limit", 20)
+            limit = data.get("limit", 10)
             offset = data.get("offset", 0)
             await self.fetch_messages(limit, offset)
 
@@ -101,19 +105,49 @@ class ChatConsumer(AsyncWebsocketConsumer):
             text_data=json.dumps({"type": "previous_messages", "messages": messages})
         )
 
-    async def chat_message(self, event):
+    async def new_message(self, event):
         message = event["message"]
+        time_stamp = event["time_stamp"]
         await self.send(
             text_data=json.dumps(
                 {
-                    "message": message,
-                    "author": self.scope["user"].username,
+                    "type": "new_message",
+                    "message": [
+                        {
+                            "text": message,
+                            "created_at": time_stamp,
+                        }
+                    ],
+                   
                 }
             )
         )
+        # await self.send(
+        #     text_data=json.dumps(
+        #         {
+        #             "type": "new_message",
+        #             "message": message,
+        #             "created_at": time_stamp,
+        #         }
+        #     )
+        # )
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+
+
+# {
+#   "type": "previous_messages",
+#   "messages": [
+#     {
+#       "author": {
+#         "username": "SHushma Khattri",
+#         "id": 7,
+#         "pic": "/media/shushma_profile.jpg"
+#       },
+#       "text": "hi",
+#       "created_at": "2024-07-10T05:08:05.183922+00:00"
+#     },
 
 
 # https://bug12.pythonanywhere.com/

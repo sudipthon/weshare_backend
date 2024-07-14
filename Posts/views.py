@@ -6,8 +6,7 @@ from django.shortcuts import get_list_or_404
 from .models import *
 from .serializers import *
 from rest_framework.pagination import PageNumberPagination
-from django.db.models import Q
-
+from django.db.models import Q,Prefetch,Count
 
 class IsAuthenticatedCustom(IsAuthenticated):
     message = "You need to login for this action."

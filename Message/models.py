@@ -38,7 +38,7 @@ class Messages(models.Model):
         User, related_name="sent_messages", on_delete=models.SET_NULL, null=True
     )
     text = models.TextField()
-    time_stamp = models.DateTimeField(auto_now_add=True)
+    time_stamp = models.DateTimeField()
     image = models.ImageField(upload_to="message_images/", blank=True, null=True)
 
     def __str__(self):

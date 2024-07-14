@@ -26,7 +26,7 @@ from django.conf.urls.static import static
 
 from Posts.views import *
 from Account.views import UserViewSet
-from Message.views import *
+# from Message.views import *
 
 router = DefaultRouter()
 router.register(r"posts", PostViewSet)
@@ -51,3 +51,7 @@ urlpatterns = [
     path("api/", include(router.urls)),
     # path("api/", include(conversations_router.urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+if settings.DEBUG:
+    urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
