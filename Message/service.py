@@ -3,6 +3,7 @@ from channels.db import database_sync_to_async
 from Message.models import Conversation, Messages
 from Account.models import User
 from django.db.models import Prefetch, Q, Count
+
 # python imports
 import logging
 from django.utils.dateparse import parse_datetime
@@ -24,6 +25,11 @@ def get_user_details(email):
     user = User.objects.get(email=email)
     # domain = "http://127.0.0.1:8000"
     # img_url = f"{domain}{user.pic.url}"
+    return {"username": user.username, "id": user.id, "pic": user.pic.url}
+
+@database_sync_to_async
+def get_user_by_id(id):
+    user = User.objects.get(id=id)
     return {"username": user.username, "id": user.id, "pic": user.pic.url}
 
 

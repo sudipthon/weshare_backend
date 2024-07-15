@@ -5,7 +5,6 @@ from urllib.parse import parse_qs
 from Message.service import *
 
 
-
 import logging
 
 logger = logging.getLogger(__name__)
@@ -65,6 +64,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         data = json.loads(text_data)
         message_type = data.get("type")
         if message_type == "new_message":
+            author_id = data["author_id"]
+            author = await get_user_by_id(author_id)
+
             message = data["message"]
             receiver = data["receiver"]
             time_stamp = data["time_stamp"]
@@ -77,6 +79,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     "type": "new_message",
                     "message": message,
                     "time_stamp": time_stamp,
+                    "author": author,
                 },
             )
 
@@ -108,46 +111,22 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def new_message(self, event):
         message = event["message"]
         time_stamp = event["time_stamp"]
+        author = event["author"]
         await self.send(
             text_data=json.dumps(
                 {
                     "type": "new_message",
-                    "message": [
-                        {
-                            "text": message,
-                            "created_at": time_stamp,
-                        }
-                    ],
-                   
+                    "message": {
+                        "text": message,
+                        "created_at": time_stamp,
+                        "author": author,
+                    },
                 }
             )
         )
-        # await self.send(
-        #     text_data=json.dumps(
-        #         {
-        #             "type": "new_message",
-        #             "message": message,
-        #             "created_at": time_stamp,
-        #         }
-        #     )
-        # )
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-
-
-# {
-#   "type": "previous_messages",
-#   "messages": [
-#     {
-#       "author": {
-#         "username": "SHushma Khattri",
-#         "id": 7,
-#         "pic": "/media/shushma_profile.jpg"
-#       },
-#       "text": "hi",
-#       "created_at": "2024-07-10T05:08:05.183922+00:00"
-#     },
 
 
 # https://bug12.pythonanywhere.com/
