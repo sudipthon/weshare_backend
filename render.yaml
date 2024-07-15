@@ -1,0 +1,40 @@
+# databases:
+#   - name: weshare
+#     plan: free
+#     databaseName: weshare
+#     user: sudip
+
+services:
+  - type: web
+    plan: free
+    name: weshare
+    region: oregon
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "python -m gunicorn WeShare.asgi:application -k uvicorn.workers.UvicornWorker --timeout 120 --workers 4"
+
+ Advanced:
+       DATABASE_URL: 'postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg-cq00fk6ehbks73e4ihc0-a/weshare_ger0'
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
+
+
+
+
+
+
+    # Exported from Render on 2024-06-29T16:01:37Z
+# services:
+# - type: web
+#   name: weshare
+#   runtime: python
+#   repo: https://github.com/sudipthon/weshare_backend
+#   branch: message
+#   plan: free
+#   region: oregon
+#   buildCommand: ./build.sh
+#   startCommand: python -m gunicorn WeShare.asgi:application -k uvicorn.workers.UvicornWorker
+#     --timeout 120 --workers 4
+# version: "1"

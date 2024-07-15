@@ -26,26 +26,32 @@ from django.conf.urls.static import static
 
 from Posts.views import *
 from Account.views import UserViewSet
-from Message.views import *
+# from Message.views import *
 
 router = DefaultRouter()
 router.register(r"posts", PostViewSet)
 router.register(r"comments", CommentViewSet)
-router.register(r'users', UserViewSet)
+router.register(r"users", UserViewSet)
 
-router.register(r'conversation', ConversationViewSet,basename='conversation')
+# router.register(r"conversation", ConversationViewSet, basename="conversation")
 # router.register(r'message', MessageViewSet,basename='message')
 
-from rest_framework_nested import routers
-conversations_router = routers.NestedSimpleRouter(router, r'conversation', lookup='conversation')
-conversations_router.register(r'message', MessageViewSet, basename='conversation-messages')
+# from rest_framework_nested import routers
+
+# conversations_router = routers.NestedSimpleRouter(
+#     router, r"conversation", lookup="conversation"
+# )
+# conversations_router.register(
+#     r"message", MessageViewSet, basename="conversation-messages"
+# )
 
 urlpatterns = [
     # ... other url patterns ...
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
-    path("api/", include(conversations_router.urls)),
+    # path("api/", include(conversations_router.urls)),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-
+if settings.DEBUG:
+    urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]

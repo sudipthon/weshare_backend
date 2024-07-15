@@ -6,8 +6,7 @@ from django.shortcuts import get_list_or_404
 from .models import *
 from .serializers import *
 from rest_framework.pagination import PageNumberPagination
-from django.db.models import Q
-
+from django.db.models import Q,Prefetch,Count
 
 class IsAuthenticatedCustom(IsAuthenticated):
     message = "You need to login for this action."
@@ -58,21 +57,18 @@ class PostViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(giveaway, many=True)
         return Response(serializer.data)
-    
+
     @action(detail=True, methods=["get"])
     def comments(self, request, pk=None):
         """Return a list of comments for a specific post."""
         post = self.get_object()
-        comments = Comment.objects.filter(post=post,reply=None)
+        comments = Comment.objects.filter(post=post, reply=None)
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
 
     @action(detail=False, url_path="exchange")
     def list_exchanges(self, request, *args, **kwargs):
         """Return a list of exchange posts."""
-
-        # self.pagination_class = CustomPageNumberPagination  # set the custom pagination class
-
         exchanges = Post.objects.filter(post_type="Exchange")
         page = self.paginate_queryset(exchanges)
         if not exchanges:
@@ -107,20 +103,6 @@ class PostViewSet(viewsets.ModelViewSet):
         methods=["get"],
         url_path="user/<int:user_id>/posts",
     )
-    # def user_posts(self, request, user_id=None):
-    #     """Return a list of posts created by the user with the given ID."""
-    #     user_posts = Post.objects.filter(author_id=user_id)
-    #     page = self.paginate_queryset(user_posts)
-    #     if not user_posts:
-    #         return Response(
-    #             {"message": "No posts by this user."}, status=status.HTTP_404_NOT_FOUND
-    #         )
-    #     if page is not None:
-    #         serializer = self.get_serializer(page, many=True)
-    #         return self.get_paginated_response(serializer.data)
-    #     serializer = self.get_serializer(user_posts, many=True)
-    #     return Response(serializer.data)
-
     @action(detail=False, methods=["get"])
     def search(self, request):
         """Return a list of posts that match the search query."""
@@ -193,7 +175,13 @@ class PostViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticatedCustom, IsOwner]
         elif self.action == "destroy":
             self.permission_classes = [IsAuthenticated, IsOwner]
-        elif self.action in ["list_giveaways","list_exchanges","search","user_posts","comments"]:
+        elif self.action in [
+            "list_giveaways",
+            "list_exchanges",
+            "search",
+            "user_posts",
+            "comments",
+        ]:
             self.permission_classes = []
 
         return super().get_permissions()
@@ -208,7 +196,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Comment.objects.filter(reply=None)
-    
+
     def create(self, request, *args, **kwargs):
         post_id = request.data.get("post_id")
         try:
@@ -230,25 +218,28 @@ class CommentViewSet(viewsets.ModelViewSet):
                 reply = Comment.objects.get(id=parent_id)
             except Comment.DoesNotExist:
                 return Response(
-                    {"error": "Parent comment does not exist"}, status=status.HTTP_400_BAD_REQUEST
+                    {"error": "Parent comment does not exist"},
+                    status=status.HTTP_400_BAD_REQUEST,
                 )
-        comment = Comment.objects.create(author=request.user, post=post, text=text, reply=reply)
+        comment = Comment.objects.create(
+            author=request.user, post=post, text=text, reply=reply
+        )
         serializer = self.get_serializer(comment)
         # return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response({"message": "Comment added"}, status=status.HTTP_201_CREATED)
-    
+
     def destroy(self, request, *args, **kwargs):
         try:
-                comment = Comment.objects.get(pk=kwargs["pk"])
+            comment = Comment.objects.get(pk=kwargs["pk"])
         except Comment.DoesNotExist:
-                return Response(
-                    {"error": "Comment does not exist."},
-                    status=status.HTTP_404_NOT_FOUND,
-                )
+            return Response(
+                {"error": "Comment does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         if comment.author != request.user:
-                return Response(
-                    {"error": "You are not the author of this comment."},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
+            return Response(
+                {"error": "You are not the author of this comment."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         comment.delete()
         return Response({"message": "Comment deleted"}, status=status.HTTP_200_OK)

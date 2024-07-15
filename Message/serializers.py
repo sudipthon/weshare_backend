@@ -22,17 +22,10 @@ class MessageSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-# class ConversationSerializer(serializers.ModelSerializer):
-#     participants = UserSerializer(many=True, read_only=True)
-#     messages = MessageSerializer(many=True, read_only=True, source='messages_set')
-#     class Meta:
-#         model = Conversation
-#         fields = ['participants', 'updated_at', 'messages']
-
-
 class ConversationSerializer(serializers.ModelSerializer):
     participants = serializers.SerializerMethodField()
-    messages = MessageSerializer(many=True, read_only=True, source="messages_set")
+    messages = MessageSerializer(
+        many=True, read_only=True, source="messages_set")
 
     class Meta:
         model = Conversation
