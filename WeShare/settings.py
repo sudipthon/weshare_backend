@@ -98,25 +98,25 @@ ASGI_APPLICATION = "WeShare.asgi.application"
 EXTERNAL_DATABASE_URL = "postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg-cq00fk6ehbks73e4ihc0-a.oregon-postgres.render.com/weshare_ger0"
 INTERNAL_DATABASE_URL = "postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg-cq00fk6ehbks73e4ihc0-a/weshare_ger0"
 
-# INTERNAL_DATABASE_URL= os.environ.get("INTERNAL_DATABASE_URL")
-# DATABASES = {
-#     "default": dj_database_url.config(
-#         default=EXTERNAL_DATABASE_URL,
-#         conn_max_age=600,
-#     )
-# }
-
-
+INTERNAL_DATABASE_URL= os.environ.get("INTERNAL_DATABASE_URL")
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "weshare",
-        "USER": "sudip",
-        "PASSWORD": "sudip",
-        "HOST": "localhost",  # The IP address or domain of your PostgreSQL server
-        "PORT": "5432",  # Default PostgreSQL port
-    }
+    "default": dj_database_url.config(
+        default=EXTERNAL_DATABASE_URL,
+        conn_max_age=600,
+    )
 }
+
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "weshare",
+#         "USER": "sudip",
+#         "PASSWORD": "sudip",
+#         "HOST": "localhost",  # The IP address or domain of your PostgreSQL server
+#         "PORT": "5432",  # Default PostgreSQL port
+#     }
+# }
 
 
 # Password validation
@@ -242,4 +242,4 @@ CHANNEL_LAYERS = {
 #     print("Failed to connect to Redis")
 
 
-SILKY_PYTHON_PROFILER = True
+# SILKY_PYTHON_PROFILER = True

@@ -11,20 +11,14 @@ from django.utils.dateparse import parse_datetime
 logger = logging.getLogger(__name__)
 database_sync_to_async
 
-database_sync_to_async
-
-
+@database_sync_to_async
 def get_user_instance(email=None, id=None):
     return User.objects.get(email=email) if email else User.objects.get(id=id)
 
 
-database_sync_to_async
-
-
+# @database_sync_to_async
 def get_user_details(email):
     user = User.objects.get(email=email)
-    # domain = "http://127.0.0.1:8000"
-    # img_url = f"{domain}{user.pic.url}"
     return {"username": user.username, "id": user.id, "pic": user.pic.url}
 
 @database_sync_to_async
