@@ -3,3 +3,4 @@ venv/
 a.py
 postgreSQL.txt
 plan.txt
+.env

@@ -40,6 +40,7 @@ his is a good start for user authentication in a Django Rest Framework applicati
     check how to get the user id for changing password
 
 
+
 commands
 daphne -p 8000 WeShare.asgi:application
 python -m gunicorn WeShare.asgi:application -k uvicorn.workers.UvicornWorker
@@ -47,3 +48,6 @@ python -m gunicorn WeShare.asgi:application -k uvicorn.workers.UvicornWorker
 before loading data
 from django.contrib.contenttypes.models import ContentType
 ContentType.objects.all().delete()
+
+
+export DJANGO_SETTINGS_MODULE='WeShare.local_settings'

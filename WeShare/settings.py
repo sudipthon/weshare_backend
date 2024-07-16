@@ -1,9 +1,12 @@
 # import environ
 import dj_database_url
 import os
+from dotenv import load_dotenv
+
 from pathlib import Path
 
-DJANGO_SETTINGS_MODULE = "WeShare.settings"
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -12,7 +15,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-a+r-!&#7bc_7hbg!hg_-b)0&!b)*&x18@iqlg9^cru*!mb8$qa"
+SECRET_KEY = os.environ.get("SECRET_KEY")
+# SECRET_KEY = "django-insecure-a+r-!&#7bc_7hbg!hg_-b)0&!b)*&x18@iqlg9^cru*!mb8$qa"
 AUTH_USER_MODEL = "Account.User"
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
@@ -91,34 +95,6 @@ TEMPLATES = [
 ASGI_APPLICATION = "WeShare.asgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-
-EXTERNAL_DATABASE_URL = "postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg-cq00fk6ehbks73e4ihc0-a.oregon-postgres.render.com/weshare_ger0"
-INTERNAL_DATABASE_URL = "postgresql://sudip:SpZm4WJXZGuzihVOD7eA6VK6nFoRSUwv@dpg-cq00fk6ehbks73e4ihc0-a/weshare_ger0"
-
-INTERNAL_DATABASE_URL= os.environ.get("INTERNAL_DATABASE_URL")
-DATABASES = {
-    "default": dj_database_url.config(
-        default=EXTERNAL_DATABASE_URL,
-        conn_max_age=600,
-    )
-}
-
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": "weshare",
-#         "USER": "sudip",
-#         "PASSWORD": "sudip",
-#         "HOST": "localhost",  # The IP address or domain of your PostgreSQL server
-#         "PORT": "5432",  # Default PostgreSQL port
-#     }
-# }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -162,8 +138,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles/")
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media/"
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -180,66 +154,5 @@ REST_FRAMEWORK = {
 }
 
 
-# STATIC_URL = "/home/myusername/myproject/static/"
-# STATICFILES_DIRS = [
-#     BASE_DIR / "statics",
-# ]
-# STATIC_ROOT="/home/myusername/myproject/staticfiles/"
-# MEDIA_URL = "/media/"
-# # Default primary key field type
-# # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 
-redis_host = "redis-16026.c81.us-east-1-2.ec2.redns.redis-cloud.com"
-redis_port = 16026
-redis_password = "p6J3UvtNJ43sfyvdgfEG2FdMjLuyVJfV"
-
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels_redis.core.RedisChannelLayer",
-#         "CONFIG": {
-#             "hosts": [("127.0.0.1", 6379)],
-#         },
-#     },
-# }
-
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [f"redis://:{redis_password}@{redis_host}:{redis_port}"],
-        },
-    },
-}
-# env = environ.Env(
-#     DEBUG=(bool, False)
-
-# )
-# environ.Env.read_env()  # reads the .env file
-
-
-# SITE_ID = 1
-
-# import redis
-
-
-# redis_host = 'redis-16026.c81.us-east-1-2.ec2.redns.redis-cloud.com'
-# redis_port = 16026
-# redis_password = 'p6J3UvtNJ43sfyvdgfEG2FdMjLuyVJfV'
-
-# client = redis.StrictRedis(
-#     host=redis_host,
-#     port=redis_port,
-#     password=redis_password,
-#     decode_responses=True
-# )
-
-# try:
-#     response = client.ping()
-#     if response:
-#         print("Connected to Redis")
-# except redis.ConnectionError:
-#     print("Failed to connect to Redis")
-
-
-# SILKY_PYTHON_PROFILER = True
