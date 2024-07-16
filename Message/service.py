@@ -9,9 +9,8 @@ import logging
 from django.utils.dateparse import parse_datetime
 
 logger = logging.getLogger(__name__)
-database_sync_to_async
 
-@database_sync_to_async
+# @database_sync_to_async
 def get_user_instance(email=None, id=None):
     return User.objects.get(email=email) if email else User.objects.get(id=id)
 
