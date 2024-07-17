@@ -51,3 +51,13 @@ ContentType.objects.all().delete()
 
 
 export DJANGO_SETTINGS_MODULE='WeShare.local_settings'
+echo $DJANGO_SETTINGS_MODULE
+
+sudo -i -u postgres
+
+Running PostgreSQL Commands Without Switching Users
+sudo -u postgres psql
+
+sudo lsof -i :8000
+sudo kill <pid>
+sudo kill  -9 <kill>
