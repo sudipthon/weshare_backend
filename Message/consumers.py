@@ -33,6 +33,21 @@ class ConversationConsumer(AsyncWebsocketConsumer):
 
         if message_type == "fetch_conversations":
             await self.fetch_and_send_conversations()
+        if message_type=="new_conv":
+            receiver = data.get("receiver")
+            user_id=self.user.id
+            new_con=await new_conversation(user_id,receiver)
+            await self.channel_layer.group_add(f"user_{receiver}", self.channel_name)
+            await self.channel_layer.group_send(
+                f"user_{receiver}",
+                {
+                    "type": "update_conversations",
+                },
+            )
+            
+            
+          
+
 
     async def fetch_and_send_conversations(self):
         conversations = await get_conversations(self.user)
@@ -68,11 +83,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
             author = await get_user_by_id(author_id)
 
             message = data["message"]
-            receiver = data["receiver"]
+            receiver = data.get("receiver")
             time_stamp = data["time_stamp"]
-            await create_message(
+            new_conv = await create_message(
                 self.conversation_id, message, self.scope["user"], receiver, time_stamp
             )
+            if new_conv:
+                message = ""
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
