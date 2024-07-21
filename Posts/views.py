@@ -6,7 +6,8 @@ from django.shortcuts import get_list_or_404
 from .models import *
 from .serializers import *
 from rest_framework.pagination import PageNumberPagination
-from django.db.models import Q,Prefetch,Count
+from django.db.models import Q, Prefetch, Count
+
 
 class IsAuthenticatedCustom(IsAuthenticated):
     message = "You need to login for this action."
@@ -108,20 +109,15 @@ class PostViewSet(viewsets.ModelViewSet):
         """Return a list of posts that match the search query."""
         query = request.query_params.get("query", "")
         post_type = request.query_params.get("post_type", "")
-
+        # try:
         posts = Post.objects.filter(
             Q(author__username__icontains=query)
             | Q(content__icontains=query)
             | Q(tags__name__icontains=query),
             post_type=post_type,
         )
-
         page = self.paginate_queryset(posts)
-        if not posts:
-            return Response(
-                {"message": "No posts match this search."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
