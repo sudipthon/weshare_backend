@@ -45,6 +45,11 @@ commands
 daphne -p 8000 WeShare.asgi:application
 python -m gunicorn WeShare.asgi:application -k uvicorn.workers.UvicornWorker
 "python -m gunicorn WeShare.asgi:application -k uvicorn.workers.UvicornWorker --timeout 120 --workers 4"
+
+this logs the https requests too
+python -m gunicorn WeShare.asgi:application -k uvicorn.workers.UvicornWorker --access-logfile - --error-logfile -
+
+
 before loading data
 from django.contrib.contenttypes.models import ContentType
 ContentType.objects.all().delete()

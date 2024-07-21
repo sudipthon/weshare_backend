@@ -98,11 +98,11 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(my_posts, many=True)
         return Response(serializer.data)
 
-    @action(
-        detail=False,
-        methods=["get"],
-        url_path="user/<int:user_id>/posts",
-    )
+    # @action(
+    #     detail=False,
+    #     methods=["get"],
+    #     url_path="user/<int:user_id>/posts",
+    # )
     @action(detail=False, methods=["get"])
     def search(self, request):
         """Return a list of posts that match the search query."""

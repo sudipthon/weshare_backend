@@ -121,6 +121,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def fetch_messages(self, limit, offset):
         messages = await get_messages(self.conversation_id, limit, offset)
+        print(f"//n/n/nmessage:{messages}")
         await self.send(
             text_data=json.dumps({"type": "previous_messages", "messages": messages})
         )
