@@ -32,6 +32,7 @@ router = DefaultRouter()
 router.register(r"posts", PostViewSet)
 router.register(r"comments", CommentViewSet)
 router.register(r"users", UserViewSet)
+router.register(r"reports", ReportsViewSet)
 
 # router.register(r"conversation", ConversationViewSet, basename="conversation")
 # router.register(r'message', MessageViewSet,basename='message')

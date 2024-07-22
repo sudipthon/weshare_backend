@@ -85,11 +85,13 @@ class PostViewSet(viewsets.ModelViewSet):
         else:
             exchanges = base_query
         page = self.paginate_queryset(exchanges)
-        if not exchanges:
-            return Response(
-                {"message": "There is no post of this type."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
+        # # if not exchanges:
+        # #     return Response(
+        # #         {"message": "There is no post of this type."},
+        # #         status=status.HTTP_404_NOT_FOUND,
+        # #     )
+        # print(f"\n\n\npage:{page}\n\n\n")
+        # return 0
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
@@ -130,12 +132,8 @@ class PostViewSet(viewsets.ModelViewSet):
             post_type=post_type,
         )
         page = self.paginate_queryset(posts)
-
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(posts, many=True)
-        return Response(serializer.data)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         """Create a new post."""
@@ -252,3 +250,11 @@ class CommentViewSet(viewsets.ModelViewSet):
             )
         comment.delete()
         return Response({"message": "Comment deleted"}, status=status.HTTP_200_OK)
+
+class ReportsViewSet(viewsets.ModelViewSet):
+    queryset = Reports.objects.all()
+    serializer_class = ReportsSerializer
+
+    def perform_create(self, serializer):
+        # Automatically set the author to the current user
+        serializer.save(author=self.request.user)
