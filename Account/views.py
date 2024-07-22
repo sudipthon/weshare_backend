@@ -38,7 +38,14 @@ class UserViewSet(viewsets.ModelViewSet):
     def login(self, request, *args, **kwargs):
         email = request.data.get("email")
         password = request.data.get("password")
+        try:
+            u = User.objects.get(email=email)
+        except User.DoesNotExist:
+             return Response(
+                {"error": "User doesn't exist"}, status=status.HTTP_400_BAD_REQUEST
+            )
         user = authenticate(email=email, password=password)
+
         if user is not None:
             token, _ = Token.objects.get_or_create(user=user)
             response = Response({"token": token.key, "user_id": user.id})

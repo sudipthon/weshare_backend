@@ -15,8 +15,9 @@ class UserSerializer(serializers.ModelSerializer):
             "username",
             "pic",
             "num_posts",
-            'email'
+            'email',
             #   "change_password"
+            "password",
         ]
         read_only_fields = ["num_posts"]
         extra_kwargs = {"password": {"write_only": True}}
@@ -25,7 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
         return Post.objects.filter(author=obj).count()
 
     def create(self, validated_data):
-        password = validated_data.pop("password", None)
+        password = validated_data.pop("password")
         email = validated_data.get("email")
         if User.objects.filter(email=email).exists():
             raise serializers.ValidationError(

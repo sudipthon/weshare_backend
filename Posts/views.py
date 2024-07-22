@@ -45,7 +45,14 @@ class PostViewSet(viewsets.ModelViewSet):
         """Return a list of giveaway posts."""
         # self.pagination_class = CustomPageNumberPagination  # set the custom pagination class
 
-        giveaway = Post.objects.filter(post_type="Giveaway")
+        base_query = Post.objects.annotate(reports_count=Count("post_reports")).filter(
+            Q(post_type="Giveaway") & ~Q(reports_count__gte=5)
+        )
+        if request.user.is_authenticated:
+            giveaway = base_query.exclude(author=request.user)
+        else:
+            giveaway = base_query
+
         page = self.paginate_queryset(giveaway)
         if not giveaway:
             return Response(
@@ -70,7 +77,13 @@ class PostViewSet(viewsets.ModelViewSet):
     @action(detail=False, url_path="exchange")
     def list_exchanges(self, request, *args, **kwargs):
         """Return a list of exchange posts."""
-        exchanges = Post.objects.filter(post_type="Exchange")
+        base_query = Post.objects.annotate(reports_count=Count("post_reports")).filter(
+            Q(post_type="Exchange") & ~Q(reports_count__gte=5)
+        )
+        if request.user.is_authenticated:
+            exchanges = base_query.exclude(author=request.user)
+        else:
+            exchanges = base_query
         page = self.paginate_queryset(exchanges)
         if not exchanges:
             return Response(
