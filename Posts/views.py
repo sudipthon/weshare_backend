@@ -45,26 +45,16 @@ class PostViewSet(viewsets.ModelViewSet):
         """Return a list of giveaway posts."""
         # self.pagination_class = CustomPageNumberPagination  # set the custom pagination class
 
-        base_query = Post.objects.annotate(reports_count=Count("post_reports")).filter(
-            Q(post_type="Giveaway") & ~Q(reports_count__gte=5)
-        )
+        base_query = Post.objects.filter(Q(post_type="Giveaway") & Q(flag=None))
         if request.user.is_authenticated:
             giveaway = base_query.exclude(author=request.user)
         else:
             giveaway = base_query
 
         page = self.paginate_queryset(giveaway)
-        if not giveaway:
-            return Response(
-                {"message": "There is no post of this type."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
 
-        serializer = self.get_serializer(giveaway, many=True)
-        return Response(serializer.data)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
     @action(detail=True, methods=["get"])
     def comments(self, request, pk=None):
@@ -77,27 +67,15 @@ class PostViewSet(viewsets.ModelViewSet):
     @action(detail=False, url_path="exchange")
     def list_exchanges(self, request, *args, **kwargs):
         """Return a list of exchange posts."""
-        base_query = Post.objects.annotate(reports_count=Count("post_reports")).filter(
-            Q(post_type="Exchange") & ~Q(reports_count__gte=5)
-        )
+        base_query = Post.objects.filter(Q(post_type="Exchange") & Q(flag=None))
         if request.user.is_authenticated:
             exchanges = base_query.exclude(author=request.user)
         else:
             exchanges = base_query
         page = self.paginate_queryset(exchanges)
-        # # if not exchanges:
-        # #     return Response(
-        # #         {"message": "There is no post of this type."},
-        # #         status=status.HTTP_404_NOT_FOUND,
-        # #     )
-        # print(f"\n\n\npage:{page}\n\n\n")
-        # return 0
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
 
-        serializer = self.get_serializer(exchanges, many=True)
-        return Response(serializer.data)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
     @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def my_posts(self, request):
@@ -114,11 +92,6 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(my_posts, many=True)
         return Response(serializer.data)
 
-    # @action(
-    #     detail=False,
-    #     methods=["get"],
-    #     url_path="user/<int:user_id>/posts",
-    # )
     @action(detail=False, methods=["get"])
     def search(self, request):
         """Return a list of posts that match the search query."""
@@ -126,10 +99,13 @@ class PostViewSet(viewsets.ModelViewSet):
         post_type = request.query_params.get("post_type", "")
         # try:
         posts = Post.objects.filter(
-            Q(author__username__icontains=query)
-            | Q(content__icontains=query)
-            | Q(tags__name__icontains=query),
-            post_type=post_type,
+            (
+                Q(author__username__icontains=query)
+                | Q(content__icontains=query)
+                | Q(tags__name__icontains=query)
+            )
+            & Q(post_type=post_type)
+            & Q(flag=None),
         )
         page = self.paginate_queryset(posts)
         serializer = self.get_serializer(page, many=True)
@@ -250,6 +226,7 @@ class CommentViewSet(viewsets.ModelViewSet):
             )
         comment.delete()
         return Response({"message": "Comment deleted"}, status=status.HTTP_200_OK)
+
 
 class ReportsViewSet(viewsets.ModelViewSet):
     queryset = Reports.objects.all()
