@@ -16,7 +16,8 @@ class Tag(models.Model):
 class Post(models.Model):
     OPTIONS = (
         ("Scam", "Scam"),
-        ("Sale & Buy", "Sale & Buy"),
+        ("Exchanged", "Exchanged"),
+        ("Gaveaway", "Gaveaway"),
     )
     post_type = (
         ("Giveaway", "Giveaway"),

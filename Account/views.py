@@ -40,8 +40,8 @@ class UserViewSet(viewsets.ModelViewSet):
         password = request.data.get("password")
         try:
             u = User.objects.get(email=email)
-        except User.DoesNotExist:
-             return Response(
+        except Exception:
+            return Response(
                 {"error": "User doesn't exist"}, status=status.HTTP_400_BAD_REQUEST
             )
         user = authenticate(email=email, password=password)
@@ -49,12 +49,13 @@ class UserViewSet(viewsets.ModelViewSet):
         if user is not None:
             token, _ = Token.objects.get_or_create(user=user)
             response = Response({"token": token.key, "user_id": user.id})
-            response.set_cookie('token', token.key, httponly=True)
-            response.set_cookie('user_id', user.id, httponly=True)
+            response.set_cookie("token", token.key, httponly=True)
+            response.set_cookie("user_id", user.id, httponly=True)
             return response
         else:
             return Response(
-                {"error": "Please enter the correct details"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Please enter the correct details"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
     @action(detail=False, methods=["post"])
