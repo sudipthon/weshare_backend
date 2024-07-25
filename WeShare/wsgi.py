@@ -5,6 +5,7 @@ import os
 from django.core.wsgi import get_wsgi_application
 import os
 import sys
+import django
 
 from dotenv import load_dotenv
 
@@ -17,6 +18,7 @@ if DJANGO_ENV == "server":
 else:
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "WeShare.local_settings")
 
+django.setup()
 # os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'WeShare.local_settings')
 
 application = get_wsgi_application()

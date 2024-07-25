@@ -2,11 +2,20 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from dotenv import load_dotenv
+
+
+load_dotenv()
+DJANGO_ENV = os.environ.get("DJANGO_ENV")
 
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'WeShare.settings')
+    if DJANGO_ENV == "server":
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "WeShare.server_settings")
+    else:
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "WeShare.local_settings")
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -20,3 +29,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+

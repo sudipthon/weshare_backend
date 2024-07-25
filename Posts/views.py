@@ -55,7 +55,6 @@ class PostViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(page, many=True)
         return self.get_paginated_response(serializer.data)
-    
 
     @action(detail=True, methods=["get"])
     def comments(self, request, pk=None):
@@ -151,20 +150,29 @@ class PostViewSet(viewsets.ModelViewSet):
         post.comments.all().delete()
         super().destroy(request, *args, **kwargs)
         return Response({"message": "Post deleted"}, status=status.HTTP_200_OK)
-    
+
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
     def set_flag(self, request, *args, **kwargs):
-        flag=request.data.get('flag')
-        post=self.get_object()
+        flag = request.data.get("flag")
+        post = self.get_object()
         if post.author != request.user:
             return Response(
                 {"error": "You are not the author of this post."},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        post.flag=flag
+        if post.flag != None:
+            return Response(
+                {"error": "Post already flagged."},
+                status=status.HTTP_428_PRECONDITION_REQUIRED,
+            )
+        # if post.post_type == flag:
+        post.flag = flag
         post.save()
-        return Response({"message": f"Post flagged {flag}"}, status=status.HTTP_200_OK)
-        
+
+        return Response(
+            {"message": f"Post flagged {flag}"}, status=status.HTTP_200_OK
+        )
+    
 
     def get_permissions(self):
         """Instantiates and returns the list of permissions."""
@@ -183,7 +191,6 @@ class PostViewSet(viewsets.ModelViewSet):
             self.permission_classes = []
 
         return super().get_permissions()
-    
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -247,21 +254,23 @@ class CommentViewSet(viewsets.ModelViewSet):
 class ReportsViewSet(viewsets.ModelViewSet):
     queryset = Reports.objects.all()
     serializer_class = ReportsSerializer
-    permission_classes=[IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     # def create(self, serializer):
     def create(self, request, *args, **kwargs):
-        user=self.request.user
-        post_id=request.data.get('post_id')
-        post=Post.objects.get(id=post_id)
+        user = self.request.user
+        post_id = request.data.get("post_id")
+        post = Post.objects.get(id=post_id)
         if Reports.objects.filter(author=user, post=post).exists():
             return Response(
                 {"error": "You have already reported this post."},
                 # status=status.HTTP_400_BAD_REQUEST,
                 status=status.HTTP_403_FORBIDDEN,
             )
-        report=Reports.objects.create(author=user, post=post, reason=request.data.get('reason'))
+        report = Reports.objects.create(
+            author=user, post=post, reason=request.data.get("reason")
+        )
         serializer = self.get_serializer(report)
-        return Response({"message": "Report added succesfully"}, status=status.HTTP_201_CREATED)
-
-        
+        return Response(
+            {"message": "Report added succesfully"}, status=status.HTTP_201_CREATED
+        )
