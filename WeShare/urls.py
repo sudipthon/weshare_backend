@@ -34,17 +34,7 @@ router.register(r"comments", CommentViewSet)
 router.register(r"users", UserViewSet)
 router.register(r"reports", ReportsViewSet)
 
-# router.register(r"conversation", ConversationViewSet, basename="conversation")
-# router.register(r'message', MessageViewSet,basename='message')
 
-# from rest_framework_nested import routers
-
-# conversations_router = routers.NestedSimpleRouter(
-#     router, r"conversation", lookup="conversation"
-# )
-# conversations_router.register(
-#     r"message", MessageViewSet, basename="conversation-messages"
-# )
 
 urlpatterns = [
     # ... other url patterns ...

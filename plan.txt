@@ -49,8 +49,10 @@ python -m gunicorn WeShare.asgi:application -k uvicorn.workers.UvicornWorker
 this logs the https requests too
 python -m gunicorn WeShare.asgi:application -k uvicorn.workers.UvicornWorker --access-logfile - --error-logfile -
 
+to server on local network
+python -m gunicorn WeShare.asgi:application -k uvicorn.workers.UvicornWorker --access-logfile - --error-logfile - --bind 0.0.0.0:8000
 
-before loading data
+3before loading data
 from django.contrib.contenttypes.models import ContentType
 ContentType.objects.all().delete()
 

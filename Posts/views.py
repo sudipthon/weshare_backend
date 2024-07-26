@@ -77,19 +77,34 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(page, many=True)
         return self.get_paginated_response(serializer.data)
 
-    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
-    def my_posts(self, request):
+    # @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
+    # def my_posts(self, request):
+    #     """Return a list of posts created by the current user."""
+    #     my_posts = Post.objects.filter(author=request.user)
+    #     page = self.paginate_queryset(my_posts)
+    #     if not my_posts:
+    #         return Response(
+    #             {"message": "No posts by this user."}, status=status.HTTP_404_NOT_FOUND
+    #         )
+    #     if page is not None:
+    #         serializer = self.get_serializer(page, many=True)
+    #         return self.get_paginated_response(serializer.data)
+    #     serializer = self.get_serializer(my_posts, many=True)
+    #     return Response(serializer.data)
+
+    @action(detail=True, methods=["get"])
+    def user_posts(self, request,pk=None):
         """Return a list of posts created by the current user."""
-        my_posts = Post.objects.filter(author=request.user)
-        page = self.paginate_queryset(my_posts)
-        if not my_posts:
-            return Response(
-                {"message": "No posts by this user."}, status=status.HTTP_404_NOT_FOUND
-            )
+
+        user = User.objects.get(id=pk)
+        posts = Post.objects.filter(author=user)
+        page = self.paginate_queryset(posts)
+
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(my_posts, many=True)
+
+        serializer = self.get_serializer(posts, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=["get"])
@@ -169,10 +184,7 @@ class PostViewSet(viewsets.ModelViewSet):
         post.flag = flag
         post.save()
 
-        return Response(
-            {"message": f"Post flagged {flag}"}, status=status.HTTP_200_OK
-        )
-    
+        return Response({"message": f"Post flagged {flag}"}, status=status.HTTP_200_OK)
 
     def get_permissions(self):
         """Instantiates and returns the list of permissions."""
