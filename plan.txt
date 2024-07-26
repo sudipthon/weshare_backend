@@ -45,9 +45,26 @@ commands
 daphne -p 8000 WeShare.asgi:application
 python -m gunicorn WeShare.asgi:application -k uvicorn.workers.UvicornWorker
 "python -m gunicorn WeShare.asgi:application -k uvicorn.workers.UvicornWorker --timeout 120 --workers 4"
-before loading data
+
+this logs the https requests too
+python -m gunicorn WeShare.asgi:application -k uvicorn.workers.UvicornWorker --access-logfile - --error-logfile -
+
+to server on local network
+python -m gunicorn WeShare.asgi:application -k uvicorn.workers.UvicornWorker --access-logfile - --error-logfile - --bind 0.0.0.0:8000
+
+3before loading data
 from django.contrib.contenttypes.models import ContentType
 ContentType.objects.all().delete()
 
 
 export DJANGO_SETTINGS_MODULE='WeShare.local_settings'
+echo $DJANGO_SETTINGS_MODULE
+
+sudo -i -u postgres
+
+Running PostgreSQL Commands Without Switching Users
+sudo -u postgres psql
+
+sudo lsof -i :8000
+sudo kill  -9 <pid>
+sudo kill  -9 <kill>

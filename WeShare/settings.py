@@ -15,8 +15,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
-# SECRET_KEY = "django-insecure-a+r-!&#7bc_7hbg!hg_-b)0&!b)*&x18@iqlg9^cru*!mb8$qa"
+SECRET_KEY = os.getenv("SECRET_KEY")
+# SECRET_KEY =  "django-insecure-a+r-!&#7bc_7hbg!hg_-b)0&!b)*&x18@iqlg9^cru*!mb8$qa"
 AUTH_USER_MODEL = "Account.User"
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
@@ -150,7 +150,7 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 6,
+    "PAGE_SIZE": 5,
 }
 
 

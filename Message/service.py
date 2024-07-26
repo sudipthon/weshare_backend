@@ -40,10 +40,9 @@ def create_message(conversation_id, message, user, receiver, time_stamp):
         conversation = Conversation.objects.create()
         conversation.participants.add(user, receiver)
         logger.info(conversation, "conersation created")
-
+        return 1
     parsed_time_stamp = parse_datetime(time_stamp)
 
-    print(f"\n\n parsed:{parsed_time_stamp}\n\n\n")
     message = Messages.objects.create(
         conversation=conversation,
         author=get_user_instance(user.email),
@@ -87,3 +86,18 @@ def get_conversations(user):
         for conversation in conversation_objs
     ]
     return conv_serialized
+
+@database_sync_to_async
+def new_conversation(user, receiver):
+    receiver = get_user_instance(id=int(receiver))
+    conversation = (
+        Conversation.objects.filter(participants__in=[user, receiver])
+        .annotate(num_participants=Count("participants"))
+        .filter(num_participants=2)
+        .first()
+    )
+    if not conversation:
+        conversation = Conversation.objects.create()
+        conversation.participants.add(user, receiver)
+        return conversation.id
+    return conversation.id

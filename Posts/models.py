@@ -16,7 +16,8 @@ class Tag(models.Model):
 class Post(models.Model):
     OPTIONS = (
         ("Scam", "Scam"),
-        ("Sale & Buy", "Sale & Buy"),
+        ("Exchanged", "Exchanged"),
+        ("Gaveaway", "Gaveaway"),
     )
     post_type = (
         ("Giveaway", "Giveaway"),
@@ -64,3 +65,10 @@ class Reports(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="author_reports"
     )
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # Call the real save() method first
+        report_count = Reports.objects.filter(post=self.post).count()
+        if report_count > 5:
+            self.post.flag = "Scam"
+            self.post.save()

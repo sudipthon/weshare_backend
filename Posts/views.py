@@ -6,7 +6,8 @@ from django.shortcuts import get_list_or_404
 from .models import *
 from .serializers import *
 from rest_framework.pagination import PageNumberPagination
-from django.db.models import Q,Prefetch,Count
+from django.db.models import Q, Prefetch, Count
+
 
 class IsAuthenticatedCustom(IsAuthenticated):
     message = "You need to login for this action."
@@ -44,19 +45,16 @@ class PostViewSet(viewsets.ModelViewSet):
         """Return a list of giveaway posts."""
         # self.pagination_class = CustomPageNumberPagination  # set the custom pagination class
 
-        giveaway = Post.objects.filter(post_type="Giveaway")
-        page = self.paginate_queryset(giveaway)
-        if not giveaway:
-            return Response(
-                {"message": "There is no post of this type."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+        base_query = Post.objects.filter(Q(post_type="Giveaway") & Q(flag=None))
+        if request.user.is_authenticated:
+            giveaway = base_query.exclude(author=request.user)
+        else:
+            giveaway = base_query
 
-        serializer = self.get_serializer(giveaway, many=True)
-        return Response(serializer.data)
+        page = self.paginate_queryset(giveaway)
+
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
     @action(detail=True, methods=["get"])
     def comments(self, request, pk=None):
@@ -69,64 +67,64 @@ class PostViewSet(viewsets.ModelViewSet):
     @action(detail=False, url_path="exchange")
     def list_exchanges(self, request, *args, **kwargs):
         """Return a list of exchange posts."""
-        exchanges = Post.objects.filter(post_type="Exchange")
+        base_query = Post.objects.filter(Q(post_type="Exchange") & Q(flag=None))
+        if request.user.is_authenticated:
+            exchanges = base_query.exclude(author=request.user)
+        else:
+            exchanges = base_query
         page = self.paginate_queryset(exchanges)
-        if not exchanges:
-            return Response(
-                {"message": "There is no post of this type."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
 
-        serializer = self.get_serializer(exchanges, many=True)
-        return Response(serializer.data)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
-    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
-    def my_posts(self, request):
+    # @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
+    # def my_posts(self, request):
+    #     """Return a list of posts created by the current user."""
+    #     my_posts = Post.objects.filter(author=request.user)
+    #     page = self.paginate_queryset(my_posts)
+    #     if not my_posts:
+    #         return Response(
+    #             {"message": "No posts by this user."}, status=status.HTTP_404_NOT_FOUND
+    #         )
+    #     if page is not None:
+    #         serializer = self.get_serializer(page, many=True)
+    #         return self.get_paginated_response(serializer.data)
+    #     serializer = self.get_serializer(my_posts, many=True)
+    #     return Response(serializer.data)
+
+    @action(detail=True, methods=["get"])
+    def user_posts(self, request,pk=None):
         """Return a list of posts created by the current user."""
-        my_posts = Post.objects.filter(author=request.user)
-        page = self.paginate_queryset(my_posts)
-        if not my_posts:
-            return Response(
-                {"message": "No posts by this user."}, status=status.HTTP_404_NOT_FOUND
-            )
+
+        user = User.objects.get(id=pk)
+        posts = Post.objects.filter(author=user)
+        page = self.paginate_queryset(posts)
+
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(my_posts, many=True)
+
+        serializer = self.get_serializer(posts, many=True)
         return Response(serializer.data)
 
-    @action(
-        detail=False,
-        methods=["get"],
-        url_path="user/<int:user_id>/posts",
-    )
     @action(detail=False, methods=["get"])
     def search(self, request):
         """Return a list of posts that match the search query."""
         query = request.query_params.get("query", "")
         post_type = request.query_params.get("post_type", "")
-
+        # try:
         posts = Post.objects.filter(
-            Q(author__username__icontains=query)
-            | Q(content__icontains=query)
-            | Q(tags__name__icontains=query),
-            post_type=post_type,
-        )
-
-        page = self.paginate_queryset(posts)
-        if not posts:
-            return Response(
-                {"message": "No posts match this search."},
-                status=status.HTTP_404_NOT_FOUND,
+            (
+                Q(author__username__icontains=query)
+                | Q(content__icontains=query)
+                | Q(tags__name__icontains=query)
             )
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(posts, many=True)
-        return Response(serializer.data)
+            & Q(post_type=post_type)
+            & Q(flag=None),
+        )
+        page = self.paginate_queryset(posts)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         """Create a new post."""
@@ -167,6 +165,26 @@ class PostViewSet(viewsets.ModelViewSet):
         post.comments.all().delete()
         super().destroy(request, *args, **kwargs)
         return Response({"message": "Post deleted"}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
+    def set_flag(self, request, *args, **kwargs):
+        flag = request.data.get("flag")
+        post = self.get_object()
+        if post.author != request.user:
+            return Response(
+                {"error": "You are not the author of this post."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        if post.flag != None:
+            return Response(
+                {"error": "Post already flagged."},
+                status=status.HTTP_428_PRECONDITION_REQUIRED,
+            )
+        # if post.post_type == flag:
+        post.flag = flag
+        post.save()
+
+        return Response({"message": f"Post flagged {flag}"}, status=status.HTTP_200_OK)
 
     def get_permissions(self):
         """Instantiates and returns the list of permissions."""
@@ -243,3 +261,28 @@ class CommentViewSet(viewsets.ModelViewSet):
             )
         comment.delete()
         return Response({"message": "Comment deleted"}, status=status.HTTP_200_OK)
+
+
+class ReportsViewSet(viewsets.ModelViewSet):
+    queryset = Reports.objects.all()
+    serializer_class = ReportsSerializer
+    permission_classes = [IsAuthenticated]
+
+    # def create(self, serializer):
+    def create(self, request, *args, **kwargs):
+        user = self.request.user
+        post_id = request.data.get("post_id")
+        post = Post.objects.get(id=post_id)
+        if Reports.objects.filter(author=user, post=post).exists():
+            return Response(
+                {"error": "You have already reported this post."},
+                # status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        report = Reports.objects.create(
+            author=user, post=post, reason=request.data.get("reason")
+        )
+        serializer = self.get_serializer(report)
+        return Response(
+            {"message": "Report added succesfully"}, status=status.HTTP_201_CREATED
+        )

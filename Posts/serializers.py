@@ -5,6 +5,7 @@ from django.utils.timesince import timesince
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.utils.datastructures import MultiValueDict
+from rest_framework.exceptions import ValidationError
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -178,3 +179,28 @@ class PostSerializer(serializers.ModelSerializer):
             instance.tags.add(tag)
 
         return instance
+
+class ReportsSerializer(serializers.ModelSerializer):
+    # post = PostSerializer(read_only=True)
+    # author = UserSerializer(read_only=True)
+    post_id = serializers.PrimaryKeyRelatedField(queryset=Post.objects.all(), source='post', write_only=True)
+    # author_id = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), source='author', write_only=True)
+
+    class Meta:
+        model = Reports
+        fields = ['id', 'post_id', 'reason', ]
+
+
+# class ReportsSerializer(serializers.ModelSerializer):
+#     post_id = serializers.PrimaryKeyRelatedField(queryset=Post.objects.all(), source='post', write_only=True)
+
+#     class Meta:
+#         model = Reports
+#         fields = ['id', 'post_id', 'reason']
+
+#     def validate(self, data):
+#         user = self.context['request'].user
+#         post = data['post_id']
+#         if Reports.objects.filter(author=user, post=post).exists():
+#             raise ValidationError('You have already reported this post.')
+#         return data

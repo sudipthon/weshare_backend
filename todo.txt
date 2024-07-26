@@ -3,3 +3,6 @@ upvote and unupvote posts
 search feature
 make each image of the post clickable
 contentevery word first letter is being capitalized ,solve it
+make users profile visitabnle from post
+add voice/video call
+notifcation system
