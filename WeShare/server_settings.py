@@ -7,9 +7,10 @@ load_dotenv()
 DEBUG = True
 
 INTERNAL_DATABASE_URL = os.environ.get("INTERNAL_DATABASE_URL")
+EXTERNAL_DATABASE_URL = os.environ.get("EXTERNAL_DATABASE_URL")
 DATABASES = {
     "default": dj_database_url.config(
-        default=INTERNAL_DATABASE_URL,
+        default=EXTERNAL_DATABASE_URL,
         conn_max_age=600,
     )
 }

@@ -56,11 +56,11 @@ INSTALLED_APPS = [
     # custom apps
     "Posts",
     "Message",
-    "silk",
+    # "silk",
 ]
 
 MIDDLEWARE = [
-    "silk.middleware.SilkyMiddleware",
+    # "silk.middleware.SilkyMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.security.SecurityMiddleware",
